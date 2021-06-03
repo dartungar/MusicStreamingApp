@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Repository.Models;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 #nullable disable
 
@@ -48,8 +50,14 @@ namespace Repository
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=test-b2b-sql;Database=NikolaevTestMusicStreamingService;Trusted_Connection=True;");
+                var builder = new ConfigurationBuilder();
+                builder.SetBasePath(Directory.GetCurrentDirectory());
+                builder.AddJsonFile("appsettings.json");
+                var config = builder.Build();
+                
+                optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+
+                optionsBuilder.LogTo(System.Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Error);
             }
         }
 
@@ -136,6 +144,12 @@ namespace Repository
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+                entity.HasData(
+                    new AddressElementType { Id = Guid.NewGuid(), Name = "Country" },
+                    new AddressElementType { Id = Guid.NewGuid(), Name = "Region" },
+                    new AddressElementType { Id = Guid.NewGuid(), Name = "City" },
+                    new AddressElementType { Id = Guid.NewGuid(), Name = "Street" }
+                    );
             });
 
             modelBuilder.Entity<Album>(entity =>
@@ -182,6 +196,10 @@ namespace Repository
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+                entity.HasData(
+                    new AlbumType { Id = Guid.NewGuid(), Name = "Album" },
+                    new AlbumType { Id = Guid.NewGuid(), Name = "EP" },
+                    new AlbumType { Id = Guid.NewGuid(), Name = "Single" });
             });
 
             modelBuilder.Entity<Artist>(entity =>
