@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Repository;
 using Repository.Models;
+using Repository.DTO;
 
 namespace Service
 {
@@ -13,36 +14,42 @@ namespace Service
 
 
         // playlist methods
-        public List<Playlist> GetPlaylists()
+        public PlaylistDto GetPlaylist(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
-            return db.Playlists.ToList();
+            return PlaylistToDto(db.Playlists.Find(id));
         }
 
-        public List<Playlist> GetPlaylists(string query)
+        public List<PlaylistDto> GetPlaylists(string query)
         {
             using ApplicationContext db = new ApplicationContext();
-            return db.Playlists.Where(p => p.Name == query).ToList();
+            return db.Playlists.Where(p => p.Name == query).Select(pl => PlaylistToDto(pl)).ToList();
         }
+
         // TODO: get playlists by collection
         // TODO: get playlists by user
 
-        public void UpdatePlaylist(Playlist playlist)
+        public void UpdatePlaylist(Guid id, string name)
         {
             using ApplicationContext db = new ApplicationContext();
-            Playlist foundPlaylist = db.Playlists.Find(playlist.Id);
-            if (foundPlaylist != null) foundPlaylist = playlist;
+            Playlist foundPlaylist = db.Playlists.Find(id);
+            if (foundPlaylist != null)
+            {
+                foundPlaylist.Name = name;
+            }
             db.SaveChanges();
         }
 
-        public Playlist AddNewPlaylist(string name, Guid userId)
+        public PlaylistDto AddNewPlaylist(string name, Guid userId)
         {
+            Playlist newPlaylist;
+            
             using ApplicationContext db = new ApplicationContext();
             Playlist existingPlaylist = db.Playlists.FirstOrDefault(p => p.Name == name && p.AuthorUserId == userId);
             if (existingPlaylist != null)
-                return existingPlaylist;
+                newPlaylist = existingPlaylist;
             Guid playlistId = Guid.NewGuid();
-            Playlist newPlaylist = new Playlist
+            newPlaylist = new Playlist
             {
                 Id = playlistId,
                 Name = name,
@@ -51,7 +58,8 @@ namespace Service
             db.Playlists.Add(newPlaylist);
             db.SaveChanges();
             AddPlaylistToUser(playlistId, userId);
-            return newPlaylist;
+
+            return PlaylistToDto(newPlaylist);
 
         }
 
@@ -71,12 +79,6 @@ namespace Service
             }
         }
 
-        public void RemovePLaylist(Playlist playlist)
-        {
-            using ApplicationContext db = new ApplicationContext();
-            db.Playlists.Remove(playlist);
-            db.SaveChanges();
-        }
 
         public void RemovePLaylist(Guid id)
         {
@@ -84,6 +86,16 @@ namespace Service
             Playlist playlist = db.Playlists.Find(id);
             if (playlist != null) db.Playlists.Remove(playlist);
             db.SaveChanges();
+        }
+
+        public PlaylistDto PlaylistToDto(Playlist playlist)
+        {
+            using ApplicationContext db = new ApplicationContext();
+            return new PlaylistDto
+            {
+                Id = playlist.Id,
+                Name = playlist.Name
+            };
         }
     }
 }

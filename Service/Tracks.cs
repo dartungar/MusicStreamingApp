@@ -5,38 +5,42 @@ using System.Text;
 using System.Threading.Tasks;
 using Repository;
 using Repository.Models;
+using Repository.DTO;
 
 namespace Service
 {
     class Tracks
     {
 
-
         // track methods
-        public List<Track> GetTracks()
+        public TrackDto GetTrack(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
-            return db.Tracks.ToList();
+            return TrackToDto(db.Tracks.Find(id));
         }
 
-        public List<Track> GetTracks(string query)
+        public List<TrackDto> GetTracks(string query)
         {
             using ApplicationContext db = new ApplicationContext();
-            return db.Tracks.Where(t => t.Name == query).ToList();
+            return db.Tracks.Where(t => t.Name == query).Select(t => TrackToDto(t)).ToList();
         }
         // TODO: get tracks by artist
         // TODO: get tracks by album
 
-        public void UpdateTrack(Track track)
+        public void UpdateTrack(Guid id, string name, int length)
         {
             using ApplicationContext db = new ApplicationContext();
-            Track foundTrack = db.Tracks.Find(track.Id);
-            if (foundTrack != null) foundTrack = track;
+            Track foundTrack = db.Tracks.Find(id);
+            if (foundTrack != null)
+            {
+                foundTrack.Name = name;
+                foundTrack.Length = length;
+            }
             db.SaveChanges();
         }
 
 
-        protected internal Track AddTrack(ITrackData data, bool saveChanges)
+        internal Track AddTrack(TrackDto data, bool saveChanges)
         {
             using ApplicationContext db = new ApplicationContext();
 
@@ -56,7 +60,7 @@ namespace Service
 
             db.Tracks.Add(newTrack);
 
-            foreach (Guid artistId in data.ArtistIds)
+            foreach (Guid artistId in data.ArtistsIds)
             {
                 Artist existingArtist = db.Artists.Find(artistId);
                 if (existingArtist == null)
@@ -75,19 +79,24 @@ namespace Service
             return newTrack;
         }
 
-        public void RemoveTrack(Track track)
-        {
-            using ApplicationContext db = new ApplicationContext();
-            db.Tracks.Remove(track);
-            db.SaveChanges();
-        }
-
         public void RemoveTrack(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             Track track = db.Tracks.Find(id);
             if (track != null) db.Tracks.Remove(track);
             db.SaveChanges();
+        }
+
+        private TrackDto TrackToDto(Track track)
+        {
+            return new TrackDto
+            {
+                Id = track.Id,
+                Name = track.Name,
+                Length = track.Length,
+                AlbumId = track.AlbumId,
+                ArtistsIds = track.TrackArtists.Select(ta => ta.ArtistId).ToList()
+            };
         }
     }
 }

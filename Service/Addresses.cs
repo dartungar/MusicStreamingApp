@@ -1,53 +1,98 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Repository;
 using Repository.Models;
+using Repository.DTO;
 
 namespace Service
 {
-    class Addresses
+    internal class Addresses
     {
 
-        // address methods
-        // TODO: overloads for various address compositions (e.g with region)
-        public Address AddAddress(string country, string city, int house)
+        internal Address AddOrGetAddress(string country, string city, string house)
         {
             using ApplicationContext db = new ApplicationContext();
-            AddressElement countryElement = AddAddressElement(country, "Country");
-            AddressElement cityElement = AddAddressElement(city, "City");
+            AddressElement countryElement = AddOrGetAddressElement(country, "Country");
+            AddressElement cityElement = AddOrGetAddressElement(city, "City");
             if (countryElement == null)
-                throw new Exception($"Ошибка при создании адреса: страна '{country}'");
+                throw new Exception($"Ошибка при создании или поиске страны: '{country}'");
             if (cityElement == null)
-                throw new Exception($"Ошибка при создании адреса: населенный пункт '{city}'");
+                throw new Exception($"Ошибка при создании или поиске населенного пункта '{city}'");
 
             Address existingAddress = db.Addresses.FirstOrDefault(
                 a => a.CountryId == countryElement.Id &&
                 a.CityId == cityElement.Id &&
                 a.House == house.ToString());
 
+            Address address;
             if (existingAddress != null)
-                return existingAddress;
-
-            Address address = new Address
             {
-                Id = Guid.NewGuid(),
-                CountryId = countryElement.Id,
-                CityId = cityElement.Id,
-                House = house.ToString()
-            };
-            db.Addresses.Add(address);
-            db.SaveChanges();
+                address = existingAddress;
+            } else
+            {
+                address = new Address
+                {
+                    Id = Guid.NewGuid(),
+                    CountryId = countryElement.Id,
+                    CityId = cityElement.Id,
+                    House = house.ToString()
+                };
+                db.Addresses.Add(address);
+                db.SaveChanges();
+            }
+
             return address;
         }
 
-        public void RemoveAddress(Address address)
+        internal Address AddOrGetAddress(string country, string region, string city, string street, string house)
         {
             using ApplicationContext db = new ApplicationContext();
-            db.Addresses.Remove(address);
-            db.SaveChanges();
+
+            AddressElement countryElement = AddOrGetAddressElement(country, "Country");
+            if (countryElement == null)
+                throw new Exception($"Ошибка при создании или поиске страны: '{country}'");
+
+            AddressElement regionElement = AddOrGetAddressElement(region, "Region");
+            if (regionElement == null)
+                throw new Exception($"Ошибка при создании или региона '{region}'");
+
+            AddressElement cityElement = AddOrGetAddressElement(city, "City");
+            if (cityElement == null)
+                throw new Exception($"Ошибка при создании или поиске населенного пункта '{city}'");
+
+            AddressElement streetElement = AddOrGetAddressElement(street, "Street");
+            if (streetElement == null)
+                throw new Exception($"Ошибка при создании или поиске улицы '{street}'");
+
+            Address existingAddress = db.Addresses.FirstOrDefault(
+                a => a.CountryId == countryElement.Id &&
+                a.RegionId == regionElement.Id &&
+                a.StreetId == streetElement.Id &&
+                a.CityId == cityElement.Id &&
+                a.House.Equals(house.ToString()));
+
+            Address address;
+            if (existingAddress != null)
+            {
+                address = existingAddress;
+            }
+            else
+            {
+                address = new Address
+                {
+                    Id = Guid.NewGuid(),
+                    CountryId = countryElement.Id,
+                    RegionId = regionElement.Id,
+                    CityId = cityElement.Id,
+                    StreetId = streetElement.Id,
+                    House = house
+                };
+                db.Addresses.Add(address);
+                db.SaveChanges();
+            }
+
+            return address;
         }
 
         public void RemoveAddress(Guid id)
@@ -58,7 +103,18 @@ namespace Service
             db.SaveChanges();
         }
 
-        public void UpdateAddress(Address address)
+        internal void UpdateAddress(Guid id, string country, string region, string city, string street, int house)
+        {
+            using ApplicationContext db = new ApplicationContext();
+            Address foundAddress = db.Addresses.Find(id);
+            foundAddress.Country = AddOrGetAddressElement(region, "Country");
+            foundAddress.Region = AddOrGetAddressElement(region, "Region");
+            foundAddress.City = AddOrGetAddressElement(region, "City");
+            foundAddress.Street = AddOrGetAddressElement(region, "Street");
+            db.SaveChanges();
+        }
+
+        internal void UpdateAddress(Address address)
         {
             using ApplicationContext db = new ApplicationContext();
             // нужно ли повторно искать пользователя? по идее, новый контекст => да
@@ -68,7 +124,7 @@ namespace Service
             db.SaveChanges();
         }
 
-        public AddressElement AddAddressElement(string value, string type) // TODO: addressElementType enum
+        public AddressElement AddOrGetAddressElement(string value, string type) // TODO: addressElementType enum
         {
             using ApplicationContext db = new ApplicationContext();
             List<AddressElementType> addressElementTypes = db.AddressElementTypes.ToList();

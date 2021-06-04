@@ -5,63 +5,83 @@ using System.Text;
 using System.Threading.Tasks;
 using Repository;
 using Repository.Models;
+using Repository.DTO;
 
 namespace Service
 {
     public class Albums
     {
-
-        // album methods
-        public List<Album> GetAlbums()
+        public AlbumDto GetAlbum(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
-            return db.Albums.ToList();
+            return AlbumToDto(db.Albums.Find(id));
         }
 
-        public List<Album> GetAlbums(string query)
+        public List<AlbumDto> GetAlbums(string query)
         {
             using ApplicationContext db = new ApplicationContext();
-            return db.Albums.Where(a => a.Name == query).ToList();
+            return db.Albums.Where(a => a.Name == query).Select(a => AlbumToDto(a)).ToList();
         }
-        // TODO: get albums by artist
 
-        public void UpdateAlbum(Album album)
+        public List<AlbumDto> GetAlbumsByArtist(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
-            Album foundAlbum = db.Albums.Find(album.Id);
-            if (foundAlbum != null) foundAlbum = album;
+            List<Guid> albumIds = (from track in db.Tracks
+                                   join trackArtist in db.TrackArtists on track.Id equals trackArtist.TrackId
+                                   where trackArtist.ArtistId == id
+                                   select track.AlbumId).ToList();
+            List<AlbumDto> albums = db.Albums.Where(
+                a => albumIds.Any(aid => aid == a.Id))
+                .Select(a => AlbumToDto(a)).ToList();
+            return albums;
+        }
+
+
+        internal List<Guid> GetAlbumsArtistsIds(Guid albumId)
+        {
+            using ApplicationContext db = new ApplicationContext();
+            Album album = db.Albums.Find(albumId);
+            List<Guid> artistsIds = (from track in db.Tracks
+                                     join trackArtist in db.TrackArtists on track.Id equals trackArtist.TrackId
+                                     where track.AlbumId == albumId
+                                     select trackArtist.ArtistId).ToList();
+            return artistsIds;
+        }
+
+        public void UpdateAlbum(Guid id, string newName)
+        {
+            using ApplicationContext db = new ApplicationContext();
+            Album foundAlbum = db.Albums.Find(id);
+            if (foundAlbum != null) foundAlbum.Name = newName;
             db.SaveChanges();
         }
 
 
-
-        // TODO
-        public Album AddAlbumWithTracks(string name, string type, DateTime dateReleased, List<ITrackData> tracksData, string imageUrl) {
+        public AlbumDto AddAlbumWithTracks(string name, string type, DateTime dateReleased, List<TrackDto> tracksData, string imageUrl) {
             using ApplicationContext db = new ApplicationContext(); // в вызываемых функциях свои контексты; это плохо?
             
             // проверка на то, существует ли альбом с таким именем и таким набором исполнителей
-            // это единственный более-менее надежный способ проверить "уникальность" альбома
+            // это единственный более-менее надежный способ проверить "уникальность" альбома без связки "альбом-исполнитель"
+
             // 1. Собираем набор исполнителей из треков, которые собираемся добавить в альбом
-            List<Guid> tracksDataArtists = tracksData.SelectMany(trackData => trackData.ArtistIds).ToList();
+            List<Guid> tracksDataArtists = tracksData.SelectMany(trackData => trackData.ArtistsIds).ToList();
+
             // 2. ищем альбомы с таким же именем
             List<Album> albumsWithSameName = db.Albums.Where(a => a.Name == name).ToList();
+
             // 3. проверяем, совпадает ли набор исполнителей с треков этого альбома
             // с набором исполнителей из треков, которые мы хотим добавить 
             if (albumsWithSameName.Count > 0)
             {
                 foreach (Album albumWithSameName in albumsWithSameName)
                 {
-                    List<Guid> albumWithSameNameArtists = (from track in db.Tracks
-                                                           join trackArtist in db.TrackArtists on track.Id equals trackArtist.TrackId
-                                                           where track.AlbumId == albumWithSameName.Id
-                                                           select trackArtist.ArtistId).ToList();
+                    List<Guid> albumWithSameNameArtists = GetAlbumsArtistsIds(albumWithSameName.Id);
                     if (albumWithSameNameArtists.Count > 0 && albumWithSameNameArtists.Intersect(tracksDataArtists).Count() == albumWithSameNameArtists.Count)
-                        throw new Exception($"Альбом с названием {name} и исполнителем(-ями) {albumWithSameNameArtists.Count} уже существует");
+                        throw new Exception($"Альбом с названием {name} и исполнителем(-ями) уже существует"); // TODO: хотя бы перечислять GUIDы
                 }
             }
 
-
-            // пронесло! продолжаем создание альбома.
+            // продолжаем создание альбома.
 
             // создаем и сохраняем в БД альбом
             Album album = AddAlbum(name, type, dateReleased, imageUrl, true);
@@ -71,24 +91,21 @@ namespace Service
             // можно было бы экономичнее (сначала добавить в контекст, потом сохранить всё разом)
             // но т.к операция нечастая и структура не элементарная (см. Track & TrackArtist)
             // пока делаем так
-            foreach (ITrackData trackData in tracksData)
+            foreach (TrackDto trackData in tracksData)
             {
                 trackData.AlbumId = album.Id;
                 createdTracks.Add(trackService.AddTrack(trackData, true));
             }
 
-            return album;
+            return new AlbumDto { Id = album.Id, };
         }
 
-        // TODO: понять, как обеспечить уникальность альбомов в рамках исполнителя
-        // с учетом того что исполнители альбома связаны с альбомом только через треки
-        // а треки нельзя создать, не создав альбом
-        // возможно, всё-таки нужна таблица AlbumArtist
+
         private Album AddAlbum(string name, string type, DateTime dateReleased, string imageUrl, bool saveChanges)
         {
             using ApplicationContext db = new ApplicationContext();
             // проверяем тип альбома
-            // нужен Enum
+            // нужен Enum?
             AlbumType albumType = db.AlbumTypes.FirstOrDefault(at => at.Name == type);
             if (albumType == null)
                 throw new Exception("Неправильный тип альбома");
@@ -108,15 +125,8 @@ namespace Service
             return newAlbum;
 
         }
-        // TODO: add album with artist name
-        // TODO: add album image
 
-        public void RemoveAlbum(Album album)
-        {
-            using ApplicationContext db = new ApplicationContext();
-            db.Albums.Remove(album);
-            db.SaveChanges();
-        }
+        // TODO: add album image
 
         public void RemoveAlbum(Guid id)
         {
@@ -124,6 +134,26 @@ namespace Service
             Album album = db.Albums.Find(id);
             if (album != null) db.Albums.Remove(album);
             db.SaveChanges();
+        }
+
+        // TODO: снизить число запросов к БД
+        private AlbumDto AlbumToDto(Album album)
+        {
+            return new AlbumDto
+            {
+                Id = album.Id,
+                Name = album.Name,
+                Image = new ImageDto { Id = album.Image.Id, Url = album.Image.Url },
+                TracksList = album.Tracks.Select(t => new TrackDto
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Length = t.Length,
+                    ArtistsIds = t.TrackArtists.Select(ta => ta.ArtistId).ToList(),
+                    AlbumId = album.Id
+                }).ToList(),
+                Artists = GetAlbumsArtistsIds(album.Id)
+            };
         }
     }
 }
