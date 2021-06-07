@@ -23,5 +23,7 @@ namespace Repository.Models
         public virtual ICollection<TrackArtist> TrackArtists { get; set; }
         public virtual ICollection<TrackPlayback> TrackPlaybacks { get; set; }
         public virtual ICollection<TrackUserReaction> TrackUserReactions { get; set; }
+
+        public List<Playlist> Playlists { get; set; } = new List<Playlist>();
     }
 }

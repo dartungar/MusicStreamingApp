@@ -318,7 +318,7 @@ namespace Repository
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Playlist_AuthorUser");
 
-                entity.HasOne(d => d.IdNavigation)
+                entity.HasOne(d => d.Image)
                     .WithOne(p => p.Playlist)
                     .HasForeignKey<Playlist>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)

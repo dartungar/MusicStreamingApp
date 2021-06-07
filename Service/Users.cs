@@ -14,19 +14,19 @@ namespace Service
     {
 
         // user & subscription methods
-        public UserDto GetUser(Guid id)
+        public static UserDto GetUser(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             return UserToDto(db.Users.Find(id));
         }
 
-        public List<UserDto> GetUsers(string query)
+        public static List<UserDto> GetUsers(string query)
         {
             using ApplicationContext db = new ApplicationContext();
             return db.Users.Where(u => u.Login == query || u.Name == query || u.Email == query).Select(u => UserToDto(u)).ToList();
         }
 
-        public void UpdateUser(Guid id, string name, string login, string email)
+        public static void UpdateUser(Guid id, string name, string login, string email)
         {
             using ApplicationContext db = new ApplicationContext();
             // нужно ли повторно искать пользователя? по идее, новый контекст => да
@@ -44,7 +44,7 @@ namespace Service
         // TODO: separate methods for updating user password / email
 
         // TODO: proper password hashing
-        public UserDto AddUser(string name, string login, string password, string email, string country, string city, string house)
+        public static UserDto AddOrGetUser(string name, string login, string password, string email, string country, string city, string house)
         {
             using ApplicationContext db = new ApplicationContext();
             User newUser = new User
@@ -53,7 +53,7 @@ namespace Service
                 Login = login,
                 PasswordHash = string.Join("", password.ToCharArray().Reverse<char>()), // тут будет нормальное хэширование
                 Name = name,
-                AddressId = new Addresses().AddOrGetAddress(country, city, house).Id,
+                AddressId = Addresses.AddOrGetAddress(country, city, house).Id,
                 Email = email
             };
             db.Users.Add(newUser);
@@ -62,7 +62,7 @@ namespace Service
 
         }
 
-        public UserDto AddUser(string name, string login, string password, string email, string country, string region, string city, string street, string house)
+        public static UserDto AddUser(string name, string login, string password, string email, string country, string region, string city, string street, string house)
         {
             using ApplicationContext db = new ApplicationContext();
             User newUser = new User
@@ -71,7 +71,7 @@ namespace Service
                 Login = login,
                 PasswordHash = string.Join("", password.ToCharArray().Reverse<char>()), // тут будет нормальное хэширование
                 Name = name,
-                AddressId = new Addresses().AddOrGetAddress(country, region, city, street, house).Id,
+                AddressId = Addresses.AddOrGetAddress(country, region, city, street, house).Id,
                 Email = email
             };
             db.Users.Add(newUser);
@@ -81,7 +81,7 @@ namespace Service
         }
 
 
-        public void RemoveUser(Guid id)
+        public static void RemoveUser(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             User user = db.Users.Find(id);
@@ -89,7 +89,7 @@ namespace Service
             db.SaveChanges();
         }
 
-        private UserDto UserToDto(User user)
+        private static UserDto UserToDto(User user)
         {
             return new UserDto
             {

@@ -9,17 +9,17 @@ using Repository.DTO;
 
 namespace Service
 {
-    class Tracks
+    public class Tracks
     {
 
         // track methods
-        public TrackDto GetTrack(Guid id)
+        public static TrackDto GetTrack(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             return TrackToDto(db.Tracks.Find(id));
         }
 
-        public List<TrackDto> GetTracks(string query)
+        public static List<TrackDto> GetTracks(string query)
         {
             using ApplicationContext db = new ApplicationContext();
             return db.Tracks.Where(t => t.Name == query).Select(t => TrackToDto(t)).ToList();
@@ -40,7 +40,7 @@ namespace Service
         }
 
 
-        internal Track AddTrack(TrackDto data, bool saveChanges)
+        public static Track AddTrack(TrackDto data, bool saveChanges)
         {
             using ApplicationContext db = new ApplicationContext();
 
@@ -79,7 +79,7 @@ namespace Service
             return newTrack;
         }
 
-        public void RemoveTrack(Guid id)
+        public static void RemoveTrack(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             Track track = db.Tracks.Find(id);
@@ -87,7 +87,7 @@ namespace Service
             db.SaveChanges();
         }
 
-        private TrackDto TrackToDto(Track track)
+        private static TrackDto TrackToDto(Track track)
         {
             return new TrackDto
             {

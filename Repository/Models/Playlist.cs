@@ -22,10 +22,12 @@ namespace Repository.Models
         public Guid PlaylistTypeId { get; set; }
 
         public virtual User AuthorUser { get; set; }
-        public virtual Image IdNavigation { get; set; }
+        public virtual Image Image { get; set; }
         public virtual PlaylistType PlaylistType { get; set; }
         public virtual ICollection<PlaylistCollection> PlaylistCollections { get; set; }
         public virtual ICollection<PlaylistFolder> PlaylistFolders { get; set; }
         public virtual ICollection<UserPlaylist> UserPlaylists { get; set; }
+
+        public List<Track> Tracks { get; set; } = new List<Track>();
     }
 }

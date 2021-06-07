@@ -11,19 +11,19 @@ namespace Service
 {
     public class Albums
     {
-        public AlbumDto GetAlbum(Guid id)
+        public static AlbumDto GetAlbum(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             return AlbumToDto(db.Albums.Find(id));
         }
 
-        public List<AlbumDto> GetAlbums(string query)
+        public static List<AlbumDto> GetAlbums(string query)
         {
             using ApplicationContext db = new ApplicationContext();
             return db.Albums.Where(a => a.Name == query).Select(a => AlbumToDto(a)).ToList();
         }
 
-        public List<AlbumDto> GetAlbumsByArtist(Guid id)
+        public static List<AlbumDto> GetAlbumsByArtist(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             List<Guid> albumIds = (from track in db.Tracks
@@ -37,7 +37,7 @@ namespace Service
         }
 
 
-        internal List<Guid> GetAlbumsArtistsIds(Guid albumId)
+        internal static List<Guid> GetAlbumsArtistsIds(Guid albumId)
         {
             using ApplicationContext db = new ApplicationContext();
             Album album = db.Albums.Find(albumId);
@@ -48,7 +48,7 @@ namespace Service
             return artistsIds;
         }
 
-        public void UpdateAlbum(Guid id, string newName)
+        public static void UpdateAlbum(Guid id, string newName)
         {
             using ApplicationContext db = new ApplicationContext();
             Album foundAlbum = db.Albums.Find(id);
@@ -57,7 +57,7 @@ namespace Service
         }
 
 
-        public AlbumDto AddAlbumWithTracks(string name, string type, DateTime dateReleased, List<TrackDto> tracksData, string imageUrl) {
+        public static AlbumDto AddAlbumWithTracks(string name, string type, DateTime dateReleased, List<TrackDto> tracksData, string imageUrl) {
             using ApplicationContext db = new ApplicationContext(); // в вызываемых функциях свои контексты; это плохо?
             
             // проверка на то, существует ли альбом с таким именем и таким набором исполнителей
@@ -85,7 +85,6 @@ namespace Service
 
             // создаем и сохраняем в БД альбом
             Album album = AddAlbum(name, type, dateReleased, imageUrl, true);
-            Tracks trackService = new Tracks();
             List<Track> createdTracks = new List<Track>();
             // создаем и сохраняем в БД треки
             // можно было бы экономичнее (сначала добавить в контекст, потом сохранить всё разом)
@@ -94,14 +93,14 @@ namespace Service
             foreach (TrackDto trackData in tracksData)
             {
                 trackData.AlbumId = album.Id;
-                createdTracks.Add(trackService.AddTrack(trackData, true));
+                createdTracks.Add(Tracks.AddTrack(trackData, true));
             }
 
             return new AlbumDto { Id = album.Id, };
         }
 
 
-        private Album AddAlbum(string name, string type, DateTime dateReleased, string imageUrl, bool saveChanges)
+        private static Album AddAlbum(string name, string type, DateTime dateReleased, string imageUrl, bool saveChanges)
         {
             using ApplicationContext db = new ApplicationContext();
             // проверяем тип альбома
@@ -128,7 +127,7 @@ namespace Service
 
         // TODO: add album image
 
-        public void RemoveAlbum(Guid id)
+        public static void RemoveAlbum(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             Album album = db.Albums.Find(id);
@@ -137,7 +136,7 @@ namespace Service
         }
 
         // TODO: снизить число запросов к БД
-        private AlbumDto AlbumToDto(Album album)
+        private static AlbumDto AlbumToDto(Album album)
         {
             return new AlbumDto
             {

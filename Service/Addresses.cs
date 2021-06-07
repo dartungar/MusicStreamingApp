@@ -10,7 +10,7 @@ namespace Service
     internal class Addresses
     {
 
-        internal Address AddOrGetAddress(string country, string city, string house)
+        internal static Address AddOrGetAddress(string country, string city, string house)
         {
             using ApplicationContext db = new ApplicationContext();
             AddressElement countryElement = AddOrGetAddressElement(country, "Country");
@@ -45,7 +45,7 @@ namespace Service
             return address;
         }
 
-        internal Address AddOrGetAddress(string country, string region, string city, string street, string house)
+        internal static Address AddOrGetAddress(string country, string region, string city, string street, string house)
         {
             using ApplicationContext db = new ApplicationContext();
 
@@ -95,7 +95,7 @@ namespace Service
             return address;
         }
 
-        public void RemoveAddress(Guid id)
+        public static void RemoveAddress(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             Address address = db.Addresses.Find(id);
@@ -103,7 +103,7 @@ namespace Service
             db.SaveChanges();
         }
 
-        internal void UpdateAddress(Guid id, string country, string region, string city, string street, int house)
+        internal static void UpdateAddress(Guid id, string country, string region, string city, string street, int house)
         {
             using ApplicationContext db = new ApplicationContext();
             Address foundAddress = db.Addresses.Find(id);
@@ -114,7 +114,7 @@ namespace Service
             db.SaveChanges();
         }
 
-        internal void UpdateAddress(Address address)
+        internal static void UpdateAddress(Address address)
         {
             using ApplicationContext db = new ApplicationContext();
             // нужно ли повторно искать пользователя? по идее, новый контекст => да
@@ -124,7 +124,7 @@ namespace Service
             db.SaveChanges();
         }
 
-        public AddressElement AddOrGetAddressElement(string value, string type) // TODO: addressElementType enum
+        public static AddressElement AddOrGetAddressElement(string value, string type) // TODO: addressElementType enum
         {
             using ApplicationContext db = new ApplicationContext();
             List<AddressElementType> addressElementTypes = db.AddressElementTypes.ToList();
@@ -150,7 +150,7 @@ namespace Service
             return el;
         }
 
-        public void UpdateAddressElement(AddressElement addressElement)
+        public static void UpdateAddressElement(AddressElement addressElement)
         {
             using ApplicationContext db = new ApplicationContext();
             AddressElement foundAddressElement = db.AddressElements.Find(addressElement.Id);
@@ -158,14 +158,14 @@ namespace Service
             db.SaveChanges();
         }
 
-        public void RemoveAddressElement(AddressElement addressElement)
+        public static void RemoveAddressElement(AddressElement addressElement)
         {
             using ApplicationContext db = new ApplicationContext();
             db.AddressElements.Remove(addressElement);
             db.SaveChanges();
         }
 
-        public void RemoveAddressElement(Guid id)
+        public static void RemoveAddressElement(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             AddressElement addressElement = db.AddressElements.Find(id);

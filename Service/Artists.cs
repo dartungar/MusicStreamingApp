@@ -12,19 +12,19 @@ namespace Service
     public class Artists
     {
         // artist methods
-        public ArtistDto GetArtists(Guid id)
+        public static ArtistDto GetArtists(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             return ArtistToDto(db.Artists.Find(id));
         }
 
-        public List<ArtistDto> GetArtists(string query)
+        public static List<ArtistDto> GetArtists(string query)
         {
             using ApplicationContext db = new ApplicationContext();
             return db.Artists.Where(a => a.Name == query).Select(a => ArtistToDto(a)).ToList();
         }
 
-        public void UpdateArtist(Guid id, string name, string description, string facebookLink)
+        public static void UpdateArtist(Guid id, string name, string description, string facebookLink)
         {
             using ApplicationContext db = new ApplicationContext();
             Artist foundArtist = db.Artists.Find(id);
@@ -37,7 +37,7 @@ namespace Service
             db.SaveChanges();
         }
 
-        public ArtistDto AddArtist(string name, string facebookLink, string description, bool isVerified, string imageUrl)
+        public static ArtistDto AddArtist(string name, string facebookLink, string description, bool isVerified, string imageUrl)
         {
             using ApplicationContext db = new ApplicationContext();
             Artist newArtist = new Artist
@@ -58,7 +58,7 @@ namespace Service
             return ArtistToDto(newArtist);
         }
 
-        public void RemoveArtist(Guid id)
+        public static void RemoveArtist(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
             Artist artist = db.Artists.Find(id);
@@ -69,7 +69,7 @@ namespace Service
         // TODO: update artist description
         // TODO: CRUD artist images
 
-        private ArtistDto ArtistToDto(Artist artist)
+        private static ArtistDto ArtistToDto(Artist artist)
         {
             return new ArtistDto
             {
