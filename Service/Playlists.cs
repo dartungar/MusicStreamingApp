@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Repository;
 using Repository.Models;
 using Repository.DTO;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Service
 {
@@ -15,13 +17,13 @@ namespace Service
         public static PlaylistDto GetPlaylist(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
-            return PlaylistToDto(db.Playlists.Find(id));
+            return PlaylistToDto(db.Playlists.AsNoTracking().Where(pl => pl.Id == id).FirstOrDefault());
         }
 
-        public static List<PlaylistDto> GetPlaylists(string query)
+        public static List<PlaylistDto> SearchPlaylists(string query)
         {
             using ApplicationContext db = new ApplicationContext();
-            return db.Playlists.Where(pl => pl.Name == query).Select(pl => PlaylistToDto(pl)).ToList();
+            return db.Playlists.AsNoTracking().Where(pl => pl.Name.Contains(query)).Select(pl => PlaylistToDto(pl)).ToList();
         }
 
 
@@ -31,7 +33,7 @@ namespace Service
             List<Playlist> playlists = (from userPlaylist in db.UserPlaylists
                                        join playlist in db.Playlists on userPlaylist.PlaylistId equals playlist.Id
                                         where userPlaylist.UserId == userId
-                                        select playlist).ToList();
+                                        select playlist).AsNoTracking().ToList();
                                        
             return playlists.Select(pl => PlaylistToDto(pl)).ToList();
         }
@@ -41,7 +43,7 @@ namespace Service
             using ApplicationContext db = new ApplicationContext();
             List<Playlist> playlists = (from userPlaylist in db.UserPlaylists
                                         join playlist in db.Playlists on userPlaylist.PlaylistId equals playlist.Id
-                                        select playlist).ToList();
+                                        select playlist).AsNoTracking().ToList();
 
             return playlists.Where(pl => pl.AuthorUserId == userId).Select(pl => PlaylistToDto(pl)).ToList();
         }
@@ -58,12 +60,12 @@ namespace Service
             db.SaveChanges();
         }
 
-        public static PlaylistDto AddOrGetPlaylist(string name, Guid userId, Guid playlistTypeId, string imageUrl)
+        public static PlaylistDto AddOrGetPlaylist(string name, Guid authorId, Guid playlistTypeId, string imageUrl)
         {
             Playlist newPlaylist;
             
             using ApplicationContext db = new ApplicationContext();
-            Playlist existingPlaylist = db.Playlists.FirstOrDefault(pl => pl.Name == name && pl.AuthorUserId == userId);
+            Playlist existingPlaylist = db.Playlists.AsNoTracking().FirstOrDefault(pl => pl.Name == name && pl.AuthorUserId == authorId);
             if (existingPlaylist != null)
                 newPlaylist = existingPlaylist;
             Guid playlistId = Guid.NewGuid();
@@ -71,13 +73,65 @@ namespace Service
             {
                 Id = playlistId,
                 Name = name,
-                AuthorUserId = userId,
+                AuthorUserId = authorId,
                 PlaylistTypeId = playlistTypeId,
-                Image = new Image { Id = Guid.NewGuid(), Url = imageUrl}
+                Image = new Image { Id = Guid.NewGuid(), Url = imageUrl }
             };
             db.Playlists.Add(newPlaylist);
             db.SaveChanges();
-            AddPlaylistToUser(playlistId, userId);
+            AddPlaylistToUser(playlistId, authorId);
+
+            return PlaylistToDto(newPlaylist);
+
+        }
+
+        public static PlaylistDto AddOrGetPlaylist(string name, string description, Guid authorId, Guid playlistTypeId, string imageUrl)
+        {
+            Playlist newPlaylist;
+
+            using ApplicationContext db = new ApplicationContext();
+            Playlist existingPlaylist = db.Playlists.AsNoTracking().FirstOrDefault(pl => pl.Name == name && pl.AuthorUserId == authorId);
+            if (existingPlaylist != null)
+                newPlaylist = existingPlaylist;
+            Guid playlistId = Guid.NewGuid();
+            newPlaylist = new Playlist
+            {
+                Id = playlistId,
+                Name = name,
+                Description = description,
+                AuthorUserId = authorId,
+                PlaylistTypeId = playlistTypeId,
+                Image = new Image { Id = Guid.NewGuid(), Url = imageUrl }
+            };
+            db.Playlists.Add(newPlaylist);
+            db.SaveChanges();
+            AddPlaylistToUser(playlistId, authorId);
+
+            return PlaylistToDto(newPlaylist);
+
+        }
+
+        public static PlaylistDto AddOrGetPlaylist(string name, string description, Guid authorId, string imageUrl)
+        {
+            Playlist newPlaylist;
+
+            using ApplicationContext db = new ApplicationContext();
+            Playlist existingPlaylist = db.Playlists.AsNoTracking().FirstOrDefault(pl => pl.Name == name && pl.AuthorUserId == authorId);
+            if (existingPlaylist != null)
+                newPlaylist = existingPlaylist;
+            Guid playlistId = Guid.NewGuid();
+            newPlaylist = new Playlist
+            {
+                Id = playlistId,
+                Name = name,
+                Description = description,
+                AuthorUserId = authorId,
+                PlaylistTypeId = db.PlaylistTypes.Where(pt => pt.Name == "Default").FirstOrDefault().Id,
+                Image = new Image { Id = Guid.NewGuid(), Url = imageUrl }
+            };
+            db.Playlists.Add(newPlaylist);
+            db.SaveChanges();
+            AddPlaylistToUser(playlistId, authorId);
 
             return PlaylistToDto(newPlaylist);
 
@@ -86,7 +140,7 @@ namespace Service
         public static void AddPlaylistToUser(Guid playlistId, Guid userId)
         {
             using ApplicationContext db = new ApplicationContext();
-            UserPlaylist existingUserPlaylist = db.UserPlaylists.FirstOrDefault(upl => upl.PlaylistId == playlistId && upl.UserId == userId);
+            UserPlaylist existingUserPlaylist = db.UserPlaylists.AsNoTracking().FirstOrDefault(upl => upl.PlaylistId == playlistId && upl.UserId == userId);
             if (existingUserPlaylist == null)
             {
                 UserPlaylist newUserPlaylist = new UserPlaylist
@@ -151,11 +205,31 @@ namespace Service
             db.SaveChanges();
         }
 
+        // playlist images methods
+        public static void UpdatePlaylistImage(Guid playlistId, string imageUrl)
+        {
+            using ApplicationContext db = new ApplicationContext();
+            Playlist playlist = db.Playlists.Find(playlistId);
+            if (playlist != null)
+            {
+                Image imageWithSameUrl = db.Images.AsNoTracking().Where(i => i.Url == imageUrl).FirstOrDefault();
+                if (imageWithSameUrl == null)
+                {
+                    Image newImage = new Image { Id = Guid.NewGuid(), Url = imageUrl };
+                    db.Images.Add(newImage);
+                    playlist.ImageId = newImage.Id;
+                    db.SaveChanges();
+                }
+                else throw new Exception($"У плейлиста {playlist.Name} уже существует изображение с URL {imageWithSameUrl.Url}");
+            }
+            else throw new Exception($"Плейлиста с ID {playlistId} не найдено");
+        }
+
         // playlist types methods
 
         public static List<PlaylistTypeDto> GetPlaylistTypes() {
             using ApplicationContext db = new ApplicationContext();
-            return db.PlaylistTypes.Select(pt => new PlaylistTypeDto { Id = pt.Id, Name = pt.Name }).ToList();
+            return db.PlaylistTypes.AsNoTracking().Select(pt => new PlaylistTypeDto { Id = pt.Id, Name = pt.Name }).ToList();
         }
     }
 }

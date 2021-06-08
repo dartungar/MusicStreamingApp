@@ -6,22 +6,29 @@ using System.Threading.Tasks;
 using Repository;
 using Repository.Models;
 using Repository.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
     public class Artists
     {
         // artist methods
-        public static ArtistDto GetArtists(Guid id)
+        public static ArtistDto GetArtist(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
-            return ArtistToDto(db.Artists.Find(id));
+            return ArtistToDto(db.Artists.AsNoTracking().Where(a => a.Id ==id).FirstOrDefault());
         }
 
-        public static List<ArtistDto> GetArtists(string query)
+        public static List<ArtistDto> GetArtistsByName(string name)
         {
             using ApplicationContext db = new ApplicationContext();
-            return db.Artists.Where(a => a.Name == query).Select(a => ArtistToDto(a)).ToList();
+            return db.Artists.AsNoTracking().Where(a => a.Name == name).Select(a => ArtistToDto(a)).ToList();
+        }
+
+        public static List<ArtistDto> SearchArtists(string query)
+        {
+            using ApplicationContext db = new ApplicationContext();
+            return db.Artists.AsNoTracking().Where(a => a.Name.Contains(query)).Select(a => ArtistToDto(a)).ToList();
         }
 
         public static void UpdateArtist(Guid id, string name, string description, string facebookLink)
@@ -45,6 +52,7 @@ namespace Service
                 Id = Guid.NewGuid(),
                 Name = name,
                 Description = description,
+                FacebookLink = facebookLink,
                 IsVerified = isVerified,
             };
             newArtist.ArtistImages.Add(
@@ -66,8 +74,36 @@ namespace Service
             db.SaveChanges();
         }
 
-        // TODO: update artist description
-        // TODO: CRUD artist images
+        public static void AddArtistImage(Guid artistId, string imageUrl)
+        {
+            using ApplicationContext db = new ApplicationContext();
+            Artist artist = db.Artists.Find(artistId);
+            if (artist != null)
+            {
+                Image imageWithSameUrl = db.Images.AsNoTracking().Where(i => i.Url == imageUrl).FirstOrDefault();
+                if (imageWithSameUrl == null)
+                {
+                    Image newImage = new Image { Id = Guid.NewGuid(), Url = imageUrl };
+                    ArtistImage artistImage = new ArtistImage { Id = Guid.NewGuid(), ArtistId = artist.Id, ImageId = newImage.Id };
+                    db.Images.Add(newImage);
+                    db.ArtistImages.Add(artistImage);
+                    db.SaveChanges();
+                }
+                else throw new Exception($"У исполнителя {artist.Name} уже существует изображение с URL {imageWithSameUrl.Url}");
+            }
+            else throw new Exception($"Исполнителя с ID {artistId} не найдено");
+        }
+
+        public static void RemoveArtistImage(Guid id)
+        {
+            using ApplicationContext db = new ApplicationContext();
+            Image image = db.Images.Find(id);
+            if (image != null) 
+            {
+                db.Images.Remove(image);
+            } 
+            db.SaveChanges();
+        }
 
         private static ArtistDto ArtistToDto(Artist artist)
         {

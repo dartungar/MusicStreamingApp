@@ -4,6 +4,7 @@ using System.Linq;
 using Repository;
 using Repository.Models;
 using Repository.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
@@ -65,12 +66,12 @@ namespace Service
             if (streetElement == null)
                 throw new Exception($"Ошибка при создании или поиске улицы '{street}'");
 
-            Address existingAddress = db.Addresses.FirstOrDefault(
+            Address existingAddress = db.Addresses.AsNoTracking().FirstOrDefault(
                 a => a.CountryId == countryElement.Id &&
                 a.RegionId == regionElement.Id &&
                 a.StreetId == streetElement.Id &&
                 a.CityId == cityElement.Id &&
-                a.House.Equals(house.ToString()));
+                a.House.Equals(house));
 
             Address address;
             if (existingAddress != null)
@@ -127,7 +128,7 @@ namespace Service
         public static AddressElement AddOrGetAddressElement(string value, string type) // TODO: addressElementType enum
         {
             using ApplicationContext db = new ApplicationContext();
-            List<AddressElementType> addressElementTypes = db.AddressElementTypes.ToList();
+            List<AddressElementType> addressElementTypes = db.AddressElementTypes.AsNoTracking().ToList();
             AddressElementType elementType = addressElementTypes.FirstOrDefault(et => et.Name == type);
             if (elementType == null)
                 throw new Exception($"Неправильный тип адресного элемента: {type}");

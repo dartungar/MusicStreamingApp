@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Repository;
 using Repository.Models;
 using Repository.DTO;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Service
 {
@@ -16,13 +18,13 @@ namespace Service
         public static TrackDto GetTrack(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
-            return TrackToDto(db.Tracks.Find(id));
+            return TrackToDto(db.Tracks.AsNoTracking().Where(t => t.Id == id).FirstOrDefault());
         }
 
-        public static List<TrackDto> GetTracks(string query)
+        public static List<TrackDto> SearchTracks(string query)
         {
             using ApplicationContext db = new ApplicationContext();
-            return db.Tracks.Where(t => t.Name == query).Select(t => TrackToDto(t)).ToList();
+            return db.Tracks.AsNoTracking().Where(t => t.Name.Contains(query)).Select(t => TrackToDto(t)).ToList();
         }
         // TODO: get tracks by artist
         // TODO: get tracks by album
@@ -39,12 +41,31 @@ namespace Service
             db.SaveChanges();
         }
 
+        public void UpdateTrack(TrackDto trackData)
+        {
+            using ApplicationContext db = new ApplicationContext();
+            Track foundTrack = db.Tracks.Find(trackData.Id);
+            if (foundTrack != null)
+            {
+                foundTrack.Name = trackData.Name;
+                foundTrack.Length = trackData.Length;
+                foundTrack.TrackArtists.Clear();
+                List<Artist> newArtists = db.Artists.Where(a => trackData.ArtistsIds.Any(aid => aid == a.Id)).ToList();
+                foreach (Artist artist in newArtists)
+                {
+                    TrackArtist trackArtist = new TrackArtist { Id = Guid.NewGuid(), Track = foundTrack, Artist = artist };
+                    db.TrackArtists.Add(trackArtist);
+                }
+                db.SaveChanges();
+            }
+        }
+
 
         public static Track AddTrack(TrackDto data, bool saveChanges)
         {
             using ApplicationContext db = new ApplicationContext();
 
-            Track existingTrack = db.Tracks.FirstOrDefault(t => t.AlbumId == data.AlbumId && t.Name == data.Name);
+            Track existingTrack = db.Tracks.AsNoTracking().FirstOrDefault(t => t.AlbumId == data.AlbumId && t.Name == data.Name);
             if (existingTrack != null)
                 return existingTrack;
 
@@ -62,7 +83,7 @@ namespace Service
 
             foreach (Guid artistId in data.ArtistsIds)
             {
-                Artist existingArtist = db.Artists.Find(artistId);
+                Artist existingArtist = db.Artists.AsNoTracking().Where(t => t.Id == artistId).FirstOrDefault();
                 if (existingArtist == null)
                     throw new Exception($"Ошибка при добавлении трека: исполнитель с ID {artistId} не найден");
 
@@ -82,7 +103,7 @@ namespace Service
         public static void RemoveTrack(Guid id)
         {
             using ApplicationContext db = new ApplicationContext();
-            Track track = db.Tracks.Find(id);
+            Track track = db.Tracks.AsNoTracking().Where(t => t.Id == id).FirstOrDefault();
             if (track != null) db.Tracks.Remove(track);
             db.SaveChanges();
         }
