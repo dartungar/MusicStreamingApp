@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    public class Tracks
+    public class TrackRepository
     {
 
         // track methods
@@ -53,7 +53,7 @@ namespace Service
                 List<Artist> newArtists = db.Artists.Where(a => trackData.ArtistsIds.Any(aid => aid == a.Id)).ToList();
                 foreach (Artist artist in newArtists)
                 {
-                    TrackArtist trackArtist = new TrackArtist { Id = Guid.NewGuid(), Track = foundTrack, Artist = artist };
+                    TrackArtist trackArtist = new TrackArtist { Track = foundTrack, Artist = artist };
                     db.TrackArtists.Add(trackArtist);
                 }
                 db.SaveChanges();
@@ -89,7 +89,6 @@ namespace Service
 
                 TrackArtist trackArtist = new TrackArtist
                 {
-                    Id = Guid.NewGuid(),
                     TrackId = trackId,
                     ArtistId = artistId
                 };

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    public class Albums
+    public class AlbumRepository
     {
         public static AlbumDto GetAlbum(Guid id)
         {
@@ -105,7 +105,7 @@ namespace Service
                 foreach (TrackDto trackData in tracksData)
                 {
                     trackData.AlbumId = album.Id;
-                    Tracks.AddTrack(trackData, true);
+                    TrackRepository.AddTrack(trackData, true);
                 }                
             }
             catch (Exception ex)
@@ -144,11 +144,10 @@ namespace Service
 
             Album newAlbum = new Album
             {
-                Id = Guid.NewGuid(),
                 Name = name,
                 Date = dateReleased,
                 AlbumTypeId = albumType.Id,
-                Image = new Image { Id = Guid.NewGuid(), Url = imageUrl}
+                Image = new Image { Url = imageUrl}
             };
             db.Albums.Add(newAlbum);
             if (saveChanges)
@@ -164,8 +163,8 @@ namespace Service
             Album album = db.Albums.Find(albumId);
 
             if (album != null)
-                if (album.Image != null)
-                    album.Image = new Image { Id = Guid.NewGuid(), Url = imageUrl };
+                if (album.Image == null)
+                    album.Image = new Image { Url = imageUrl };
                 else
                     album.Image.Url = imageUrl;
             else throw new Exception($"Альбом с ID {albumId} не найден");

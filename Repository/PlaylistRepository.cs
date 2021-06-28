@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    public class Playlists
+    public class PlaylistRepository
     {
 
         public static PlaylistDto GetPlaylist(Guid id)
@@ -75,7 +75,7 @@ namespace Service
                 Name = name,
                 AuthorUserId = authorId,
                 PlaylistTypeId = playlistTypeId,
-                Image = new Image { Id = Guid.NewGuid(), Url = imageUrl }
+                Image = new Image { Url = imageUrl }
             };
             db.Playlists.Add(newPlaylist);
             db.SaveChanges();
@@ -101,7 +101,7 @@ namespace Service
                 Description = description,
                 AuthorUserId = authorId,
                 PlaylistTypeId = playlistTypeId,
-                Image = new Image { Id = Guid.NewGuid(), Url = imageUrl }
+                Image = new Image { Url = imageUrl }
             };
             db.Playlists.Add(newPlaylist);
             db.SaveChanges();
@@ -127,7 +127,7 @@ namespace Service
                 Description = description,
                 AuthorUserId = authorId,
                 PlaylistTypeId = db.PlaylistTypes.Where(pt => pt.Name == "Default").FirstOrDefault().Id,
-                Image = new Image { Id = Guid.NewGuid(), Url = imageUrl }
+                Image = new Image { Url = imageUrl }
             };
             db.Playlists.Add(newPlaylist);
             db.SaveChanges();
@@ -145,7 +145,6 @@ namespace Service
             {
                 UserPlaylist newUserPlaylist = new UserPlaylist
                 {
-                    Id = Guid.NewGuid(),
                     PlaylistId = playlistId,
                     UserId = userId
                 };
@@ -164,7 +163,6 @@ namespace Service
 
         public static PlaylistDto PlaylistToDto(Playlist playlist)
         {
-            using ApplicationContext db = new ApplicationContext();
             return new PlaylistDto
             {
                 Id = playlist.Id,
@@ -215,7 +213,7 @@ namespace Service
                 Image imageWithSameUrl = db.Images.AsNoTracking().Where(i => i.Url == imageUrl).FirstOrDefault();
                 if (imageWithSameUrl == null)
                 {
-                    Image newImage = new Image { Id = Guid.NewGuid(), Url = imageUrl };
+                    Image newImage = new Image { Url = imageUrl };
                     db.Images.Add(newImage);
                     playlist.ImageId = newImage.Id;
                     db.SaveChanges();

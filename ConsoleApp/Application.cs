@@ -110,7 +110,7 @@ namespace ConsoleApp
 
             try
             {
-                UserDto user = Users.AddOrGetUser(name, login, password, email, country, region, city, street, house);
+                UserDto user = UserRepository.AddOrGetUser(name, login, password, email, country, region, city, street, house);
                 User = user;
                 Console.WriteLine("Добро пожаловать!");
             }
@@ -128,12 +128,12 @@ namespace ConsoleApp
         {
             Console.WriteLine("Введите логин:");
             string login = Console.ReadLine();
-            UserDto user = Users.GetUser(login);
+            UserDto user = UserRepository.GetUser(login);
             if (user != null)
             {
                 Console.WriteLine("Введите пароль:");
                 string password = Console.ReadLine();
-                UserDto authenticatedUser = Users.CheckUserPassword(login, password);
+                UserDto authenticatedUser = UserRepository.CheckUserPassword(login, password);
                 if (authenticatedUser != null)
                 {
                     User = authenticatedUser;
@@ -157,7 +157,7 @@ namespace ConsoleApp
         {
             Console.WriteLine("Введите запрос для поиска пользователя по логину, имени, e-mail:");
             string query = Console.ReadLine();
-            List<UserDto> users = Users.SearchUsers(query);
+            List<UserDto> users = UserRepository.SearchUsers(query);
             if (users.Count > 0)
             {
                 foreach (UserDto user in users)
@@ -179,7 +179,7 @@ namespace ConsoleApp
         {
             Console.WriteLine("Введите название трека для поиска:");
             string query = Console.ReadLine();
-            List<TrackDto> tracks = Tracks.SearchTracks(query);
+            List<TrackDto> tracks = TrackRepository.SearchTracks(query);
             if (tracks.Count > 0)
             {
                 foreach (TrackDto track in tracks)
@@ -187,7 +187,7 @@ namespace ConsoleApp
                     List<string> artistNames = new List<string>();
                     foreach (Guid artistId in track.ArtistsIds)
                     {
-                        artistNames.Add(Artists.GetArtist(artistId).Name);
+                        artistNames.Add(ArtistRepository.GetArtist(artistId).Name);
                     }
                     string artists = artistNames.Count > 1 ? string.Join(", ", artistNames) : artistNames.FirstOrDefault();
                     Console.WriteLine($"{track.Length / 60}:{(track.Length % 60).ToString().PadLeft(2, '0')}  {track.Name} by {artists}");
@@ -208,7 +208,7 @@ namespace ConsoleApp
         {
             Console.WriteLine("Введите название исполнителя для поиска:");
             string query = Console.ReadLine();
-            List<ArtistDto> artists = Artists.SearchArtists(query);
+            List<ArtistDto> artists = ArtistRepository.SearchArtists(query);
             if (artists.Count > 0)
             {
                 Console.WriteLine("Найдены исполнители:");
@@ -228,7 +228,7 @@ namespace ConsoleApp
         /// <returns>List<ArtistDto></returns>
         public List<ArtistDto> SearchArtists(string query)
         {
-            List<ArtistDto> artists = Artists.SearchArtists(query);
+            List<ArtistDto> artists = ArtistRepository.SearchArtists(query);
             if (artists.Count > 0)
             {
                 Console.WriteLine("Найдены исполнители:");
@@ -249,16 +249,13 @@ namespace ConsoleApp
         {
             Console.WriteLine("Введите название плейлиста для поиска:");
             string query = Console.ReadLine();
-            List<PlaylistDto> playlists = Playlists.SearchPlaylists(query);
+            List<PlaylistDto> playlists = PlaylistRepository.SearchPlaylists(query);
             if (playlists.Count > 0)
             {
                 foreach (PlaylistDto playlist in playlists)
                 {
-
-                    if (playlist.TracksIds == null || playlist.TracksIds.Count == 0)
-                        Console.WriteLine($"{playlist.Name} - empty");
-                    else if (playlist.TracksIds.Count > 0)
-                        Console.WriteLine($"{playlist.Name} - {playlist.TracksIds.Count} songs");
+                    string msg = $"{playlist.Name} - " + (playlist.TracksIds?.Count > 0 ? $"{playlist.TracksIds.Count} songs" : "empty");
+                    Console.WriteLine(msg);
                 }
             }
             else
@@ -294,7 +291,7 @@ namespace ConsoleApp
             {
                 Console.WriteLine("Введите название трека. Если вы закончили, введите пробел и нажмите Enter.");
                 string trackName = Console.ReadLine();
-                if (trackName.Equals(" "))
+                if (string.IsNullOrWhiteSpace(trackName))
                 {
                     addingTracks = false;
                     break;
@@ -315,13 +312,13 @@ namespace ConsoleApp
                     Console.WriteLine("Введите название исполнителя трека. Исполнителей может быть больше одного. Чтобы прекратить добавление, введите пробел и нажмите Enter.");
 
                     string query = Console.ReadLine();
-                    if (query.Equals(" "))
+                    if (string.IsNullOrWhiteSpace(query))
                     {
                         addingTracks = false;
                         break;
                     }
                     // TODO: что делать, если исполнитель не найден
-                    ArtistDto artist = Artists.GetArtistsByName(query).First(); // TODO - выбор артиста из списка найденных
+                    ArtistDto artist = ArtistRepository.GetArtistsByName(query).FirstOrDefault(); // TODO - выбор артиста из списка найденных
                     if (artist == null)
                     {
                         Console.WriteLine($"Исполнитель {query} не найден. Добавить? Введите да / нет:");
@@ -336,7 +333,7 @@ namespace ConsoleApp
 
             try
             {
-                Albums.AddAlbumWithTracks(albumName, albumType, albumDateReleased, tracks, albumImageUrl);
+                AlbumRepository.AddAlbumWithTracks(albumName, albumType, albumDateReleased, tracks, albumImageUrl);
                 Console.WriteLine($"Альбом {albumName} с {tracks.Count} треками добавлен");
                 
             }
@@ -356,7 +353,7 @@ namespace ConsoleApp
         {
             Console.WriteLine("Введите название исполнителя:");
             string artistName = Console.ReadLine();
-            List <ArtistDto> existingArtists = Artists.GetArtistsByName(artistName);
+            List <ArtistDto> existingArtists = ArtistRepository.GetArtistsByName(artistName);
             if (existingArtists.Count > 0)
             {
                 Console.WriteLine($"Исполнитель с названием {artistName} уже существует");
@@ -367,24 +364,24 @@ namespace ConsoleApp
                 string artistDescription = "";
                 Console.WriteLine("Введите описание / биографию исполнителя. Чтобы пропустить, введите пробел и нажмите Enter");
                 string enteredArtistDescription = Console.ReadLine();
-                if (!enteredArtistDescription.Equals(" "))
+                if (!string.IsNullOrWhiteSpace(enteredArtistDescription))
                     artistDescription = enteredArtistDescription;
 
                 string artistFacebookLink = "";
                 Console.WriteLine("Введите ссылку на Facebook исполнителя. Чтобы пропустить, введите пробел и нажмите Enter");
                 string enteredFacebookLink = Console.ReadLine();
-                if (!enteredFacebookLink.Equals(" "))
+                if (!string.IsNullOrWhiteSpace(enteredFacebookLink))
                     artistFacebookLink = enteredFacebookLink;
 
                 string artistImageUrl = "https://corgicare.com/wp-content/uploads/corgi-puppies.jpg";
                 Console.WriteLine("Введите ссылку на фотографию исполнителя. Чтобы использовать изображение по умолчанию, введите пробел и нажмите Enter");
                 string enteredImageUrl = Console.ReadLine();
-                if (!enteredImageUrl.Equals(" "))
+                if (!string.IsNullOrWhiteSpace(enteredImageUrl))
                     artistImageUrl = enteredImageUrl;
 
                 try
                 {
-                    ArtistDto artist = Artists.AddArtist(artistName, artistFacebookLink, artistDescription, false, artistImageUrl);
+                    ArtistDto artist = ArtistRepository.AddArtist(artistName, artistFacebookLink, artistDescription, false, artistImageUrl);
                     Console.WriteLine("Исполнитель добавлен");
                     ShowLoader(1500, 500);
                     return artist;
@@ -405,7 +402,7 @@ namespace ConsoleApp
         {
             Console.WriteLine("Введите название исполнителя, которого нужно изменить:");
             string artistName = Console.ReadLine();
-            List<ArtistDto> existingArtists = Artists.GetArtistsByName(artistName);
+            List<ArtistDto> existingArtists = ArtistRepository.GetArtistsByName(artistName);
             ArtistDto artist;
             if (existingArtists.Count == 0)
             {
@@ -427,23 +424,23 @@ namespace ConsoleApp
                 string artistDescription = artist.Description;
                 Console.WriteLine("Введите новое описание / биографию исполнителя. Чтобы пропустить, введите пробел и нажмите Enter");
                 string enteredArtistDescription = Console.ReadLine();
-                if (!enteredArtistDescription.Equals(" "))
+                if (!string.IsNullOrWhiteSpace(enteredArtistDescription))
                     artistDescription = enteredArtistDescription;
 
                 string artistFacebookLink = artist.FacebookLink;
                 Console.WriteLine("Введите новую ссылку на Facebook исполнителя. Чтобы пропустить, введите пробел и нажмите Enter");
                 string enteredFacebookLink = Console.ReadLine();
-                if (!enteredFacebookLink.Equals(" "))
+                if (!string.IsNullOrWhiteSpace(enteredFacebookLink))
                     artistFacebookLink = enteredFacebookLink;
 
                 Console.WriteLine("Введите ссылку на фотографию исполнителя. Чтобы пропустить, введите пробел и нажмите Enter");
                 string enteredImageUrl = Console.ReadLine();
-                if (!enteredImageUrl.Equals(" "))
-                    Artists.AddArtistImage(artist.Id, enteredImageUrl);
+                if (!string.IsNullOrWhiteSpace(enteredImageUrl))
+                    ArtistRepository.AddArtistImage(artist.Id, enteredImageUrl);
 
                 try
                 {
-                    Artists.UpdateArtist(artist.Id, artist.Name, artistDescription, artistFacebookLink);
+                    ArtistRepository.UpdateArtist(artist.Id, artist.Name, artistDescription, artistFacebookLink);
                     Console.WriteLine("Исполнитель изменён");
                     ShowLoader(1500, 500);
                 }
@@ -462,7 +459,7 @@ namespace ConsoleApp
         {
             Console.WriteLine("Введите название плейлиста:");
             string playlistName = Console.ReadLine();
-            List<PlaylistDto> existingPlaylists = Playlists.GetUserPlaylists(User.Id);
+            List<PlaylistDto> existingPlaylists = PlaylistRepository.GetUserPlaylists(User.Id);
             if (existingPlaylists.Any(pl => pl.Name == playlistName)) 
             {
                 Console.WriteLine("У вас уже есть плейлист с таким названием");
@@ -473,18 +470,18 @@ namespace ConsoleApp
                 string playlistDescription = "";
                 Console.WriteLine("Введите описание плейлиста. Чтобы пропустить, введите пробел и нажмите Enter");
                 string enteredPlaylistDescription = Console.ReadLine();
-                if (!enteredPlaylistDescription.Equals(" "))
+                if (!string.IsNullOrWhiteSpace(enteredPlaylistDescription))
                     playlistDescription = enteredPlaylistDescription;
 
                 string playlistImageUrl = "https://s3.amazonaws.com/cdn-origin-etr.akc.org/wp-content/uploads/2017/11/15175802/Airedale-Terrier-mother-and-puppy1.jpg";
                 Console.WriteLine("Введите ссылку на изображение плейлиста. Чтобы использовать изображение по умолчанию, введите пробел и нажмите Enter");
                 string enteredImageUrl = Console.ReadLine();
-                if (!enteredImageUrl.Equals(" "))
+                if (!string.IsNullOrWhiteSpace(enteredImageUrl))
                     playlistImageUrl = enteredImageUrl;
 
                 try
                 {
-                    Playlists.AddOrGetPlaylist(playlistName, playlistDescription, User.Id, playlistImageUrl);
+                    PlaylistRepository.AddOrGetPlaylist(playlistName, playlistDescription, User.Id, playlistImageUrl);
                     Console.WriteLine("Плейлист добавлен");
                     ShowLoader(1500, 500);
                 }
@@ -500,7 +497,7 @@ namespace ConsoleApp
         {
             Console.WriteLine("Введите название одного из ваших плейлистов:");
             string playlistName = Console.ReadLine();
-            List<PlaylistDto> existingPlaylists = Playlists.GetUserPlaylists(User.Id);
+            List<PlaylistDto> existingPlaylists = PlaylistRepository.GetUserPlaylists(User.Id);
             if (existingPlaylists.Count == 0)
             {
                 Console.WriteLine("У вас нет плейлистов");
@@ -512,12 +509,11 @@ namespace ConsoleApp
             if (matchingUserPlaylists.Count > 1)
             {
                 Console.WriteLine($"По запросу {playlistName} найдено более 1 плейлиста. Повторите попытку, уточнив запрос");
-                return;
             } else if (matchingUserPlaylists.Count == 1)
             {
                 try
                 {
-                    Playlists.RemovePLaylist(matchingUserPlaylists.First().Id);
+                    PlaylistRepository.RemovePLaylist(matchingUserPlaylists.First().Id);
                     Console.WriteLine("Плейлист удален");
                     WaitTillUserPressesEnter();
                 }

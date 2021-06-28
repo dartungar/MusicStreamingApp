@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    public class Users
+    public class UserRepository
     {
         // user & subscription methods
         public static UserDto GetUser(Guid id)
@@ -81,11 +81,10 @@ namespace Service
             {
                 user = new User
                 {
-                    Id = Guid.NewGuid(),
                     Login = login,
                     PasswordHash = string.Join("", password.ToCharArray().Reverse<char>()), // тут будет нормальное хэширование
                     Name = name,
-                    AddressId = Addresses.AddOrGetAddress(country, city, house).Id,
+                    AddressId = AddressRepository.AddOrGetAddress(country, city, house).Id,
                     Email = email
                 };
                 db.Users.Add(user);
@@ -104,11 +103,10 @@ namespace Service
             {
                 user = new User
                 {
-                    Id = Guid.NewGuid(),
                     Login = login,
                     PasswordHash = string.Join("", password.ToCharArray().Reverse<char>()), // тут будет нормальное хэширование
                     Name = name,
-                    AddressId = Addresses.AddOrGetAddress(country, region, city, street, house).Id,
+                    AddressId = AddressRepository.AddOrGetAddress(country, region, city, street, house).Id,
                     Email = email
                 };
                 db.Users.Add(user);

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    public class Artists
+    public class ArtistRepository
     {
         // artist methods
         public static ArtistDto GetArtist(Guid id)
@@ -49,7 +49,6 @@ namespace Service
             using ApplicationContext db = new ApplicationContext();
             Artist newArtist = new Artist
             {
-                Id = Guid.NewGuid(),
                 Name = name,
                 Description = description,
                 FacebookLink = facebookLink,
@@ -57,9 +56,7 @@ namespace Service
             };
             newArtist.ArtistImages.Add(
                 new ArtistImage { 
-                    Id = Guid.NewGuid(), 
                     Image = new Image { 
-                        Id = Guid.NewGuid(), 
                         Url = imageUrl } });
             db.Artists.Add(newArtist);
             db.SaveChanges();
@@ -78,20 +75,15 @@ namespace Service
         {
             using ApplicationContext db = new ApplicationContext();
             Artist artist = db.Artists.Find(artistId);
-            if (artist != null)
-            {
-                Image imageWithSameUrl = db.Images.AsNoTracking().Where(i => i.Url == imageUrl).FirstOrDefault();
-                if (imageWithSameUrl == null)
-                {
-                    Image newImage = new Image { Id = Guid.NewGuid(), Url = imageUrl };
-                    ArtistImage artistImage = new ArtistImage { Id = Guid.NewGuid(), ArtistId = artist.Id, ImageId = newImage.Id };
-                    db.Images.Add(newImage);
-                    db.ArtistImages.Add(artistImage);
-                    db.SaveChanges();
-                }
-                else throw new Exception($"У исполнителя {artist.Name} уже существует изображение с URL {imageWithSameUrl.Url}");
-            }
-            else throw new Exception($"Исполнителя с ID {artistId} не найдено");
+            if (artist == null) throw new Exception($"Исполнителя с ID {artistId} не найдено");
+            Image imageWithSameUrl = db.Images.AsNoTracking().Where(i => i.Url == imageUrl).FirstOrDefault();
+            if (imageWithSameUrl != null) throw new Exception($"У исполнителя {artist.Name} уже существует изображение с URL {imageWithSameUrl.Url}");
+            Image newImage = new Image { Url = imageUrl };
+            ArtistImage artistImage = new ArtistImage { ArtistId = artist.Id, ImageId = newImage.Id };
+            db.Images.Add(newImage);
+            db.ArtistImages.Add(artistImage);
+            db.SaveChanges();
+
         }
 
         public static void RemoveArtistImage(Guid id)

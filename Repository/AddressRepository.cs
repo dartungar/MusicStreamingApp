@@ -8,8 +8,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-    internal class Addresses
+    internal class AddressRepository
     {
+        private ApplicationContext context;
+
+        public AddressRepository(ApplicationContext context)
+        {
+            context = new ApplicationContext();
+        }
+
+        public void Save()
+        {
+            context.SaveChanges();
+        }
 
         internal static Address AddOrGetAddress(string country, string city, string house)
         {
@@ -34,7 +45,6 @@ namespace Service
             {
                 address = new Address
                 {
-                    Id = Guid.NewGuid(),
                     CountryId = countryElement.Id,
                     CityId = cityElement.Id,
                     House = house.ToString()
@@ -82,7 +92,6 @@ namespace Service
             {
                 address = new Address
                 {
-                    Id = Guid.NewGuid(),
                     CountryId = countryElement.Id,
                     RegionId = regionElement.Id,
                     CityId = cityElement.Id,
@@ -142,7 +151,6 @@ namespace Service
 
             AddressElement el = new AddressElement
             {
-                Id = Guid.NewGuid(),
                 Value = value,
                 AddressElementTypeId = elementType.Id
             };
