@@ -9,6 +9,7 @@ using Repository.DTO;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 
+// Теперь есть GenericRepository. Этот - удалить, после того как перенесу нужные методы в соответствующий Service
 
 namespace Service
 {

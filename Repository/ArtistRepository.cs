@@ -8,6 +8,8 @@ using Repository.Models;
 using Repository.DTO;
 using Microsoft.EntityFrameworkCore;
 
+// Теперь есть GenericRepository. Этот - удалить, после того как перенесу нужные методы в соответствующий Service
+
 namespace Service
 {
     public class ArtistRepository
