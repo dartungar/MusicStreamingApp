@@ -1,0 +1,11 @@
+﻿@*
+    TODO: точно DTOшки использовать? наверное да... но мне не нравится что лезем в Repository
+*@
+@model Repository.DTO.ArtistDto 
+@{
+    ViewData["Title"] = "Artist Info";
+}
+
+<h1>@Model.Name</h1>
+<p>@Model.Description</p>
+<p><a href="@Model.FacebookLink">@Model.FacebookLink</a></p>

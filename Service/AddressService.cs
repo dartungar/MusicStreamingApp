@@ -1,46 +1,69 @@
 ﻿using System;
+using System.Collections.Generic;
 using Repository;
 using Repository.Models;
 using Repository.DTO;
+using AutoMapper;
+using System.Linq;
 
 namespace Service
 {
-    class AddressService
+    public class AddressService : BaseService<Address, AddressDto>
     {
-        private readonly UnitOfWork unitOfWork;
 
-        public AddressService(UnitOfWork unitOfWork)
+        public AddressService(UnitOfWork unitOfWork): base(unitOfWork)
         {
-            this.unitOfWork = unitOfWork;
         }
-        
-        public AddressDto GetAddressById(Guid id)
+
+        public override AddressDto GetById(Guid id)
         {
-            Address address = unitOfWork.AddressRepository.GetById(id);
+            Address address = _unitOfWork.AddressRepository.GetById(id);
             if (address == null) throw new Exception("Адрес не найден");
             return ToDto(address);
         }
 
-
-        public void AddAddress(AddressDto addressData)
+        public override List<AddressDto> Get()
         {
-            Address address = FromDto(addressData);
-            unitOfWork.AddressRepository.Insert(address);
-            unitOfWork.Save();
+            var addresses = (List<Address>)_unitOfWork.AddressRepository.Get();
+            return addresses.Select(a => ToDto(a)).ToList();
+        }
+
+
+        public override void Add(AddressDto addressDto)
+        {
+            Address address = FromDto(addressDto);
+            _unitOfWork.AddressRepository.Insert(address);
+            _unitOfWork.Save();
 
         }
 
-        public void UpdateAddress(AddressDto addressData)
+        public override void Update(AddressDto addressDto)
         {
-            Address address;
-            if (addressData.Id == Guid.Empty) throw new Exception("Для изменения данных адреса необходимо указать его ID");
-            if (unitOfWork.AddressRepository.GetById(addressData.Id) == null) throw new Exception("Адрес не найден");
-            address = FromDto(addressData);
-            unitOfWork.AddressRepository.Update(address);
-            unitOfWork.Save();
+            if (addressDto.Id == Guid.Empty) 
+                throw new Exception("Для изменения данных адреса необходимо указать его ID");
+            if (_unitOfWork.AddressRepository.GetById(addressDto.Id) == null) 
+                throw new Exception("Адрес не найден");
+            _unitOfWork.AddressRepository.Update(FromDto(addressDto));
+            _unitOfWork.Save();
         }
 
-        private AddressDto ToDto(Address address)
+        public  void Delete(AddressDto addressDto)
+        {
+            if (addressDto.Id == Guid.Empty)
+                throw new Exception("Для удаления адреса необходимо указать его ID");
+            Delete(addressDto.Id);
+        }
+
+        public override void Delete(Guid id)
+        {
+            Address address = _unitOfWork.AddressRepository.GetById(id);
+            if (address == null)
+                throw new Exception("Адрес не найден");
+            _unitOfWork.AddressRepository.Delete(address);
+        }
+
+        // TODO: нормальный маппинг
+        public override AddressDto ToDto(Address address)
         {
             return new AddressDto
             {
@@ -58,8 +81,10 @@ namespace Service
         /// </summary>
         /// <param name="addressDto"></param>
         /// <returns></returns>
-        private Address FromDto(AddressDto addressDto)
+        public override Address FromDto(AddressDto addressDto)
         {
+            // TODO: реализовать маппинг с AutoMapper (уже реализовал маппер, осталось проверить)
+            // выглядит сложно, возможно есть ошибка проектирования?
             AddressElement country = AddressElementFromDto(addressDto.Country);
             AddressElement region = AddressElementFromDto(addressDto.Region);
             AddressElement city = AddressElementFromDto(addressDto.City);
@@ -80,11 +105,11 @@ namespace Service
             return address;
         }
 
-        private AddressElement AddressElementFromDto(AddressElementDto addressElementDto)
+        protected AddressElement AddressElementFromDto(AddressElementDto addressElementDto)
         {
             if (addressElementDto.Id != Guid.Empty)
             {
-                AddressElement addressElement = unitOfWork.AddressElementRepository.GetById(addressElementDto.Id);
+                AddressElement addressElement = _unitOfWork.AddressElementRepository.GetById(addressElementDto.Id);
                 if (addressElement != null) return addressElement;
                 throw new Exception("Адресный элемент не найден");
             }

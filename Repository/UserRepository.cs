@@ -85,7 +85,7 @@ namespace Service
                     Login = login,
                     PasswordHash = string.Join("", password.ToCharArray().Reverse<char>()), // тут будет нормальное хэширование
                     Name = name,
-                    AddressId = AddressRepository.AddOrGetAddress(country, city, house).Id,
+                    //AddressId = AddressRepository.AddOrGetAddress(country, city, house).Id,
                     Email = email
                 };
                 db.Users.Add(user);
@@ -107,7 +107,7 @@ namespace Service
                     Login = login,
                     PasswordHash = string.Join("", password.ToCharArray().Reverse<char>()), // тут будет нормальное хэширование
                     Name = name,
-                    AddressId = AddressRepository.AddOrGetAddress(country, region, city, street, house).Id,
+                    //AddressId = AddressRepository.AddOrGetAddress(country, region, city, street, house).Id,
                     Email = email
                 };
                 db.Users.Add(user);

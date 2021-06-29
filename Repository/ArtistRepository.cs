@@ -107,7 +107,7 @@ namespace Service
                 Name = artist.Name,
                 Description = artist.Description,
                 FacebookLink = artist.FacebookLink,
-                ImagesIds = artist.ArtistImages.Select(ai => ai.ImageId).ToList()
+                ImageIds = artist.ArtistImages.Select(ai => ai.ImageId).ToList()
             };
         }
     }

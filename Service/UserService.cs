@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Service
 {
-    class UserService
+    public class UserService
     {
     }
 }

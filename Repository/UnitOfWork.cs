@@ -19,6 +19,7 @@ namespace Repository
         private GenericRepository<Track> trackRepository;
         private GenericRepository<User> userRepository;
 
+        // Если найду способ обращаться к репозиториям на основе типа, получится лучше абстрагировать сервисы в GenericService
 
         public GenericRepository<Address> AddressRepository
         {

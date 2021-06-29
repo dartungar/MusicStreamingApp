@@ -12,6 +12,6 @@ namespace Repository.DTO
         public string Name { get; set; }
         public string Description { get; set; }
         public string FacebookLink { get; set; }
-        public List<Guid> ImagesIds { get; set; }
+        public List<Guid> ImageIds { get; set; }
     }
 }
