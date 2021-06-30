@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Repository;
-using Repository.DTO;
-using Repository.Models;
 using AutoMapper;
 
 namespace Service
@@ -13,14 +8,18 @@ namespace Service
     public abstract class BaseService<TEntity, TDto> : IService<TEntity, TDto>
     {
         protected readonly UnitOfWork _unitOfWork;
-        public IMapper Mapper { get; set; }
+        public IMapper MapperToDto { get; set; }
+        public IMapper MapperFromDto { get; set; }
 
 
         public BaseService(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            var mapConfig = new MapperConfiguration(cfg => cfg.CreateMap<TEntity, TDto>());
-            Mapper = mapConfig.CreateMapper();
+
+            var mapConfigToDto = new MapperConfiguration(cfg => cfg.CreateMap<TEntity, TDto>());
+            MapperToDto = mapConfigToDto.CreateMapper();
+            var mapConfigFromDto = new MapperConfiguration(cfg => cfg.CreateMap<TDto, TEntity>());
+            MapperFromDto = mapConfigFromDto.CreateMapper();
         }
 
         public abstract TDto GetById(Guid id);
@@ -35,12 +34,12 @@ namespace Service
 
         public virtual TDto ToDto(TEntity entity)
         {
-            return Mapper.Map<TDto>(entity);
+            return MapperToDto.Map<TDto>(entity);
         }
 
         public virtual TEntity FromDto(TDto dto)
         {
-            return Mapper.Map<TEntity>(dto);
+            return MapperFromDto.Map<TEntity>(dto);
         }
     }
 }

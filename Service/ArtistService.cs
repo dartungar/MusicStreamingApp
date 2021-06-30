@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Repository;
 using Repository.Models;
-using Repository.DTO;
+using Service.DTO;
 
 namespace Service
 {
@@ -23,7 +23,7 @@ namespace Service
 
         public override List<ArtistDto> Get()
         {
-            var artists = (List<Artist>)_unitOfWork.AddressRepository.Get();
+            var artists = (List<Artist>)_unitOfWork.ArtistRepository.Get();
             return artists.Select(a => ToDto(a)).ToList();
         }
 
@@ -36,21 +36,29 @@ namespace Service
 
         public override void Update(ArtistDto artistDto)
         {
-            if (artistDto.Id == Guid.Empty)
+            if (artistDto.Id == null)
                 throw new Exception("Для изменения данных исполнителя необходимо указать его ID");
-            if (_unitOfWork.ArtistRepository.GetById(artistDto.Id) == null)
+
+            // кастим Guid? -> Guid, т.к провели проверку на NULL
+            // наверное есть более каноничный способ?..
+            Artist oldArtist = _unitOfWork.ArtistRepository.GetById((Guid)artistDto.Id);
+            if (oldArtist == null)
                 throw new Exception("Исполнитель не найден");
 
-            _unitOfWork.ArtistRepository.Update(FromDto(artistDto));
+            Artist newArtist = FromDto(artistDto);
+
+            _unitOfWork.ArtistRepository.Update(oldArtist, newArtist);
             _unitOfWork.Save();
         }
 
 
         public void Delete(ArtistDto artistDto)
         {
-            if (artistDto.Id == Guid.Empty)
-                throw new Exception("Для удаления исполнителя необходимо указать его ID");
-            Delete(artistDto.Id);
+            if (artistDto.Id != null)
+                Delete((Guid)artistDto.Id);
+            throw new Exception("Для удаления исполнителя необходимо указать его ID");
+           
+            
         }
 
         public override void Delete(Guid id)
@@ -59,18 +67,22 @@ namespace Service
             if (artist == null)
                 throw new Exception("Исполнитель не найден");
             _unitOfWork.ArtistRepository.Delete(artist);
+            _unitOfWork.Save();
         }
 
-        public override ArtistDto ToDto(Artist artist)
-        {
-            return Mapper.Map<ArtistDto>(artist);
-        }
-
-        // TODO: проверить маппинг
-        // особенно поведение с ID (что если Guid.Empty? Guid.Empty - ошибка проектирования DTO?)
         public override Artist FromDto(ArtistDto artistDto)
         {
-            return Mapper.Map<Artist>(artistDto);
+            try
+            {
+                Artist artist = MapperFromDto.Map<Artist>(artistDto);
+                // ArtistDto.Guid? == null бывает в случаях, когда, например, приходят данные для создания нового исполнителя
+                artist.Id = artistDto.Id == null ? Guid.NewGuid() : (Guid)artistDto.Id;
+                return artist;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
     }
 }

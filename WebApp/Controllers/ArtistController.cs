@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Service;
-using Repository.DTO;
+using Service.DTO;
 
 
 namespace WebApp.Controllers
@@ -22,7 +22,8 @@ namespace WebApp.Controllers
         // GET: ArtistController
         public ActionResult Index()
         {
-            return View();
+            var artists = _service.Get();
+            return View(artists);
         }
 
         // GET: ArtistController/Details/5
@@ -42,58 +43,70 @@ namespace WebApp.Controllers
         // POST: ArtistController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create([FromForm]ArtistDto artistDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(artistDto);
+            }
+
             try
             {
+                _service.Add(artistDto);
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return Redirect("/home/error");
             }
         }
 
         // GET: ArtistController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(Guid id)
         {
-            return View();
+            ArtistDto artist = _service.GetById(id);
+            if (artist == null)
+                return NotFound();
+            return View(artist);
         }
 
         // POST: ArtistController/Edit/5
+        // TODO: client-side валидация ID
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit([FromForm] ArtistDto artistDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             try
             {
+                _service.Update(artistDto);
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
+                // TODO: показывать сообщение об ошибке (передавать во вьюшку видимо? + в общем лэйауте место под это)
                 return View();
             }
         }
 
         // GET: ArtistController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ArtistController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(Guid id)
         {
             try
             {
+                _service.Delete(id);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception)
             {
-                return View();
+                throw;
             }
+            
         }
+
     }
 }

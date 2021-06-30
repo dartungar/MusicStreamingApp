@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository;
 
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210630154410_CascadeDeleteArtistArtistTracks2")]
+    partial class CascadeDeleteArtistArtistTracks2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,22 +120,22 @@ namespace Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("41b86ffd-c60b-4cda-8903-76bb4e1f1592"),
+                            Id = new Guid("293a544b-79e3-4365-b12d-019fc7fb476d"),
                             Name = "Country"
                         },
                         new
                         {
-                            Id = new Guid("3958a68b-9239-4d6b-ab00-6c6689062c43"),
+                            Id = new Guid("65efc804-d6cf-430a-ac0e-9974678b7780"),
                             Name = "Region"
                         },
                         new
                         {
-                            Id = new Guid("a888f760-8449-4c06-9f44-08a858122e8f"),
+                            Id = new Guid("1c99e9f8-dc90-4038-b1af-2d293f5e0d4e"),
                             Name = "City"
                         },
                         new
                         {
-                            Id = new Guid("734467fc-5996-4f04-a975-33c1382395f9"),
+                            Id = new Guid("8e504ef3-6276-48d5-8eeb-0cfbd75679f3"),
                             Name = "Street"
                         });
                 });
@@ -189,17 +191,17 @@ namespace Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("17b77bdf-45f5-43ee-b181-9b5db9d5fa8d"),
+                            Id = new Guid("c85c9b7f-67bc-4c9e-93cc-0b365b13576b"),
                             Name = "Album"
                         },
                         new
                         {
-                            Id = new Guid("d0d07794-4e7c-4b3b-8edc-383fa164c4d8"),
+                            Id = new Guid("15bd3823-d3d7-4ce1-97f6-e696e7a58a54"),
                             Name = "EP"
                         },
                         new
                         {
-                            Id = new Guid("e0b201c2-3bc7-4b7e-ad16-765d52c32589"),
+                            Id = new Guid("2442ed30-a4b5-48fd-be84-675e27487623"),
                             Name = "Single"
                         });
                 });
@@ -812,14 +814,12 @@ namespace Repository.Migrations
                         .WithMany("ArtistImages")
                         .HasForeignKey("ArtistId")
                         .HasConstraintName("FK_ArtistImage_Artist")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Repository.Models.Image", "Image")
                         .WithMany("ArtistImages")
                         .HasForeignKey("ImageId")
                         .HasConstraintName("FK_ArtistImage_Image")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Artist");

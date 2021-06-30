@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Repository;
 using Repository.Models;
-using Repository.DTO;
 using AutoMapper;
 using System.Linq;
+using Service.DTO;
 
 namespace Service
 {
@@ -41,9 +41,10 @@ namespace Service
         {
             if (addressDto.Id == Guid.Empty) 
                 throw new Exception("Для изменения данных адреса необходимо указать его ID");
-            if (_unitOfWork.AddressRepository.GetById(addressDto.Id) == null) 
+            Address oldAddress = _unitOfWork.AddressRepository.GetById(addressDto.Id);
+            if (oldAddress == null) 
                 throw new Exception("Адрес не найден");
-            _unitOfWork.AddressRepository.Update(FromDto(addressDto));
+            _unitOfWork.AddressRepository.Update(oldAddress, FromDto(addressDto));
             _unitOfWork.Save();
         }
 

@@ -11,6 +11,7 @@ namespace Repository
     {
         private ApplicationContext context = new ApplicationContext();
         private bool disposed = false;
+
         private GenericRepository<Address> addressRepository;
         private GenericRepository<AddressElement> addressElementRepository;
         private GenericRepository<Album> albumRepository;

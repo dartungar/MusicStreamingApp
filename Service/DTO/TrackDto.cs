@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository.DTO
+namespace Service.DTO
 {
-    public class PlaylistDto
+    public class TrackDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public List<Guid> TracksIds { get; set; }
+        public int Length { get; set; }
+        public List<Guid> ArtistsIds { get; set; }
+        public Guid AlbumId { get; set; }
     }
 }

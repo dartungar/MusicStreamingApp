@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Repository;
 using Repository.Models;
-using Repository.DTO;
+using Service.DTO;
 
 namespace Service
 {

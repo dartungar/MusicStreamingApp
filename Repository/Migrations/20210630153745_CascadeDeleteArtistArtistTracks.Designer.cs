@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository;
 
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210630153745_CascadeDeleteArtistArtistTracks")]
+    partial class CascadeDeleteArtistArtistTracks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,22 +120,22 @@ namespace Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("41b86ffd-c60b-4cda-8903-76bb4e1f1592"),
+                            Id = new Guid("46d75256-4e54-4287-8557-961475b792b6"),
                             Name = "Country"
                         },
                         new
                         {
-                            Id = new Guid("3958a68b-9239-4d6b-ab00-6c6689062c43"),
+                            Id = new Guid("da6019dc-caac-4dad-862b-b4e8e2b11e52"),
                             Name = "Region"
                         },
                         new
                         {
-                            Id = new Guid("a888f760-8449-4c06-9f44-08a858122e8f"),
+                            Id = new Guid("d35b1120-a076-4634-bce4-65f3f69699ab"),
                             Name = "City"
                         },
                         new
                         {
-                            Id = new Guid("734467fc-5996-4f04-a975-33c1382395f9"),
+                            Id = new Guid("c916d09a-c9e6-4a12-b05e-0c8e7fdb6799"),
                             Name = "Street"
                         });
                 });
@@ -189,17 +191,17 @@ namespace Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("17b77bdf-45f5-43ee-b181-9b5db9d5fa8d"),
+                            Id = new Guid("3fa2b648-a426-4140-9ed4-3229c638a89f"),
                             Name = "Album"
                         },
                         new
                         {
-                            Id = new Guid("d0d07794-4e7c-4b3b-8edc-383fa164c4d8"),
+                            Id = new Guid("2c2228f6-fc67-43a0-93e3-d85c60e128ee"),
                             Name = "EP"
                         },
                         new
                         {
-                            Id = new Guid("e0b201c2-3bc7-4b7e-ad16-765d52c32589"),
+                            Id = new Guid("b60a288a-b223-4ce8-804d-d6c86c6d62af"),
                             Name = "Single"
                         });
                 });
@@ -812,14 +814,12 @@ namespace Repository.Migrations
                         .WithMany("ArtistImages")
                         .HasForeignKey("ArtistId")
                         .HasConstraintName("FK_ArtistImage_Artist")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Repository.Models.Image", "Image")
                         .WithMany("ArtistImages")
                         .HasForeignKey("ImageId")
                         .HasConstraintName("FK_ArtistImage_Image")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Artist");
@@ -920,14 +920,12 @@ namespace Repository.Migrations
                         .WithMany("TrackArtists")
                         .HasForeignKey("ArtistId")
                         .HasConstraintName("FK_TrackArtist_Artist")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Repository.Models.Track", "Track")
                         .WithMany("TrackArtists")
                         .HasForeignKey("TrackId")
                         .HasConstraintName("FK_TrackArtist_Track")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Artist");

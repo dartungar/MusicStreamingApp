@@ -43,11 +43,12 @@ namespace Repository
             dbSet.Add(entity);
         }
 
-        public virtual void Update(TEntity entity) {
-            // добавляем измененную сущность в контекст
-            dbSet.Attach(entity);
+        public virtual void Update(TEntity oldEntity, TEntity newEntity) {
+            // устанавливаем сущности измененные атрибуты
+            context.Entry(oldEntity).CurrentValues.SetValues(newEntity);
+            
             // указываем, что она изменилась
-            context.Entry(entity).State = EntityState.Modified;
+            context.Entry(oldEntity).State = EntityState.Modified;
         }
 
         public virtual void Delete(Guid id) {

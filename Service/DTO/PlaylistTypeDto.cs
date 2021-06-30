@@ -4,14 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository.DTO
+namespace Service.DTO
 {
-   public class UserDto
+    public class PlaylistTypeDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Login { get; set; }
-        public string Email { get; set; }
-        public Guid AddressId { get; set; }
     }
 }

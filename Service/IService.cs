@@ -7,7 +7,8 @@ namespace Service
 {
     public interface IService<TEntity, TDto>
     {
-        public IMapper Mapper { get; set; }
+        public IMapper MapperToDto { get; set; }
+        public IMapper MapperFromDto { get; set; }
 
         public TDto GetById(Guid id);
 

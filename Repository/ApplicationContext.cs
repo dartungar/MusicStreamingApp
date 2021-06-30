@@ -219,6 +219,7 @@ namespace Repository
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+                
             });
 
             modelBuilder.Entity<ArtistImage>(entity =>
@@ -239,13 +240,13 @@ namespace Repository
                 entity.HasOne(d => d.Artist)
                     .WithMany(p => p.ArtistImages)
                     .HasForeignKey(d => d.ArtistId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_ArtistImage_Artist");
 
                 entity.HasOne(d => d.Image)
                     .WithMany(p => p.ArtistImages)
                     .HasForeignKey(d => d.ImageId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_ArtistImage_Image");
             });
 
@@ -459,13 +460,13 @@ namespace Repository
                 entity.HasOne(d => d.Artist)
                     .WithMany(p => p.TrackArtists)
                     .HasForeignKey(d => d.ArtistId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_TrackArtist_Artist");
 
                 entity.HasOne(d => d.Track)
                     .WithMany(p => p.TrackArtists)
                     .HasForeignKey(d => d.TrackId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_TrackArtist_Track");
             });
 
