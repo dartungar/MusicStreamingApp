@@ -71,7 +71,6 @@ namespace WebApp.Controllers
         }
 
         // POST: ArtistController/Edit/5
-        // TODO: client-side валидация ID
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([FromForm] ArtistDto artistDto)
