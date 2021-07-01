@@ -83,11 +83,13 @@ namespace WebApp.Controllers
             try
             {
                 _service.Update(artistDto);
+                TempData["Success"] = "Изменения сохранены";
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
                 // TODO: показывать сообщение об ошибке (передавать во вьюшку видимо? + в общем лэйауте место под это)
+                TempData["Error"] = "Ошибка при сохранении изменений. Попробуйте ещё раз или напишите на support@treolan.ru";
                 return View();
             }
         }
