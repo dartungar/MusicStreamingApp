@@ -5,7 +5,7 @@ namespace Service.DTO
 {
     public class AddressDto
     {
-        public Guid Id { get; set; } = Guid.Empty;
+        public Guid? Id { get; set; }
         public AddressElementDto Country { get; set; }
         public AddressElementDto Region { get; set; }
         public AddressElementDto City { get; set; }

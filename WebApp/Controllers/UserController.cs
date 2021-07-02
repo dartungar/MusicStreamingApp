@@ -11,78 +11,78 @@ using Service.DTO;
 
 namespace WebApp.Controllers
 {
-    public class ArtistController : Controller
+    public class UserController : Controller
     {
-        private readonly ArtistService _service;
+        private readonly UserService _service;
 
-        public ArtistController(ArtistService artistService) : base()
+        public UserController(UserService userService) : base()
         {
-            _service = artistService;
+            _service = userService;
         }
 
-        // GET: ArtistController
+        // GET: User
         [Authorize]
         public ActionResult Index()
         {
-            var artists = _service.Get();
-            return View(artists);
+            var users = _service.Get();
+            return View(users);
         }
 
-        // GET: ArtistController/Details/5
+        // GET: User/Details/5
         [Authorize]
         public ActionResult Details(Guid id)
         {
-            ArtistDto artist = _service.GetById(id);
-            if (artist == null) return NotFound();
-            return View(artist);
+            UserDto user = _service.GetById(id);
+            if (user == null) return NotFound();
+            return View(user);
         }
 
-        // GET: ArtistController/Create
+        // GET: User/Create
         [Authorize]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: ArtistController/Create
+        // POST: User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Create([FromForm]ArtistDto artistDto)
+        public ActionResult Create([FromForm]UserDto userDto)
         {
             if (!ModelState.IsValid)
             {
-                return View(artistDto);
+                return View(userDto);
             }
 
             try
             {
-                _service.Add(artistDto);
-                TempData["Success"] = "Исполнитель создан";
+                _service.Add(userDto);
+                TempData["Success"] = "Пользователь зарегистрирован";
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                TempData["Error"] = "Ошибка при создании исполнителя. Попробуйте еще раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Ошибка при регистрации пользователя. Попробуйте еще раз или напишите на support@treolan.ru";
                 return View();
             }
         }
 
-        // GET: ArtistController/Edit/5
+        // GET: User/Edit/5
         [Authorize]
         public ActionResult Edit(Guid id)
         {
-            ArtistDto artist = _service.GetById(id);
-            if (artist == null)
+            UserDto user = _service.GetById(id);
+            if (user == null)
                 return NotFound();
-            return View(artist);
+            return View(user);
         }
 
-        // POST: ArtistController/Edit/5
+        // POST: User/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Edit([FromForm] ArtistDto artistDto)
+        public ActionResult Edit([FromForm] UserDto userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -91,7 +91,7 @@ namespace WebApp.Controllers
 
             try
             {
-                _service.Update(artistDto);
+                _service.Update(userDto);
                 TempData["Success"] = "Изменения сохранены";
                 return RedirectToAction(nameof(Index));
             }
@@ -103,19 +103,19 @@ namespace WebApp.Controllers
             }
         }
 
-        // GET: ArtistController/Delete/5
+        // GET: User/Delete/5
         [Authorize]
         public ActionResult Delete(Guid id)
         {
             try
             {
                 _service.Delete(id);
-                TempData["Success"] = "Исполнитель удален";
+                TempData["Success"] = "Пользователь удален";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)
             {
-                TempData["Error"] = "Ошибка при удалении исполнителя. Попробуйте ещё раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Ошибка при удалении пользователя. Попробуйте ещё раз или напишите на support@treolan.ru";
                 return RedirectToAction(nameof(Index));
             }
             

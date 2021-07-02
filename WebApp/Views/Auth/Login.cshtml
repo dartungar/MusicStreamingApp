@@ -1,0 +1,32 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Service.DTO.LoginDto
+@{
+    ViewData["Title"] = "Login";
+}
+<h4>Log in</h4>
+<div class="align-content-center">
+    <form method="post" class="form">
+        <div class="validation text-danger" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group">
+            <label asp-for="Login"></label>
+            <input type="text" asp-for="Login" placeholder="Enter login" class="form-control" />
+            <span asp-validation-for="Login" class="text-danger small"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password"></label>
+            <input type="password" asp-for="Password" placeholder="Enter login" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-success mr-3">Login</button>
+            <a class="btn btn-secondary" href="/artist"> Back</a>
+        </div>
+
+    </form>
+</div>
+    
+
+
+@await Html.PartialAsync("../Shared/_ValidationScriptsPartial")

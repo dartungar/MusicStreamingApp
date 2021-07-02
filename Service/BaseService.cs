@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using Repository;
 using AutoMapper;
 
@@ -24,9 +25,11 @@ namespace Service
 
         public abstract TDto GetById(Guid id);
 
-        public abstract List<TDto> Get();
+        public abstract List<TDto> Get(Expression<Func<TEntity, bool>> filter = null);
 
         public abstract void Add(TDto dto);
+
+        public abstract void Add(TEntity entity);
 
         public abstract void Update(TDto dto);
 

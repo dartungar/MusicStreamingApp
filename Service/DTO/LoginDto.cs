@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Service.DTO
 {
-    public class AddressElementDto
+    public class LoginDto
     {
-        public Guid? Id { get; set; }
-        public string Value { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
     }
 }

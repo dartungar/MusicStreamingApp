@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Repository;
 using Repository.Models;
 using Service.DTO;
@@ -21,15 +22,21 @@ namespace Service
             return ToDto(artist);
         }
 
-        public override List<ArtistDto> Get()
+        public override List<ArtistDto> Get(Expression<Func<Artist, bool>> filter = null)
         {
-            var artists = (List<Artist>)_unitOfWork.ArtistRepository.Get();
+            var artists = (List<Artist>)_unitOfWork.ArtistRepository.Get(filter);
             return artists.Select(a => ToDto(a)).ToList();
         }
 
         public override void Add(ArtistDto artistDto)
         {
             Artist artist = FromDto(artistDto);
+            _unitOfWork.ArtistRepository.Insert(artist);
+            _unitOfWork.Save();
+        }
+
+        public override void Add(Artist artist)
+        {
             _unitOfWork.ArtistRepository.Insert(artist);
             _unitOfWork.Save();
         }
@@ -76,7 +83,7 @@ namespace Service
             {
                 Artist artist = MapperFromDto.Map<Artist>(artistDto);
                 // ArtistDto.Guid? == null бывает в случаях, когда, например, приходят данные для создания нового исполнителя
-                artist.Id = artistDto.Id == null ? Guid.NewGuid() : (Guid)artistDto.Id;
+                artist.Id = artistDto.Id ?? Guid.NewGuid();
                 return artist;
             }
             catch (Exception e)

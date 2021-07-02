@@ -14,6 +14,7 @@ namespace Repository
 
         private GenericRepository<Address> addressRepository;
         private GenericRepository<AddressElement> addressElementRepository;
+        private GenericRepository<AddressElementType> addressElementTypeRepository;
         private GenericRepository<Album> albumRepository;
         private GenericRepository<Artist> artistRepository;
         private GenericRepository<Playlist> playlistRepository;
@@ -45,6 +46,19 @@ namespace Repository
                 }
 
                 return addressElementRepository;
+            }
+        }
+
+        public GenericRepository<AddressElementType> AddressElementTypeRepository
+        {
+            get
+            {
+                if (addressElementTypeRepository == null)
+                {
+                    addressElementTypeRepository = new GenericRepository<AddressElementType>(context);
+                }
+
+                return addressElementTypeRepository;
             }
         }
 
