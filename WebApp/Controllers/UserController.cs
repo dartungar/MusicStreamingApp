@@ -21,7 +21,6 @@ namespace WebApp.Controllers
         }
 
         // GET: User
-        [Authorize]
         public ActionResult Index()
         {
             var users = _service.Get();
@@ -32,6 +31,10 @@ namespace WebApp.Controllers
         [Authorize]
         public ActionResult Details(Guid id)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+
+            }
             UserDto user = _service.GetById(id);
             if (user == null) return NotFound();
             return View(user);
@@ -120,6 +123,8 @@ namespace WebApp.Controllers
             }
             
         }
+
+
 
     }
 }

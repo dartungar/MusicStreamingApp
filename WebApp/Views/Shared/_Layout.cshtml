@@ -22,35 +22,40 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Artist" asp-action="Index">Artists</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="Index">Users</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Auth" asp-action="Logout">Logout</a>
-                            </li>
-                        } 
+
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Artist" asp-action="Index">Artists</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="Index">Users</a>
+                        </li>
+
+
+
+
+                    </ul>
+                    <ul class="navbar-nav">
                         @if (!User.Identity.IsAuthenticated)
                         {
+
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="Auth" asp-action="Login">Login</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="Auth" asp-action="Register">Register</a>
                             </li>
-                        }
 
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item"><span class="nav-link">Welcome, @User.Identity.Name!</span></li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Auth" asp-action="Logout">Logout</a>
+                            </li>
+                        }
                     </ul>
-                    @if(User.Identity.IsAuthenticated)
-                    {
-                        <div>Welcome, @User.Identity.Name!</div>
-                    }
-                    
-                </div>
+
+                    </div>
             </div>
         </nav>
     </header>

@@ -21,7 +21,6 @@ namespace WebApp.Controllers
         }
 
         // GET: ArtistController
-        [Authorize]
         public ActionResult Index()
         {
             var artists = _service.Get();
@@ -29,7 +28,6 @@ namespace WebApp.Controllers
         }
 
         // GET: ArtistController/Details/5
-        [Authorize]
         public ActionResult Details(Guid id)
         {
             ArtistDto artist = _service.GetById(id);

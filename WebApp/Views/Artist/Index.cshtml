@@ -12,20 +12,27 @@
         <tr>
             <th>Name</th>
             <th>Description</th>
-            <th>Actions</th>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <th>Actions</th>
+            }
+
         </tr>
     </thead>
     @foreach (var artist in Model)
     {
-        <tr>
-            <td><a href="/artist/details/@artist.Id" class="text-success">@artist.Name</a></td>
-            <td>@artist.Description</td>
-            <td>
-                <a class="text-light mr-2" href="/artist/edit/@artist.Id"><i class="far fa-edit"></i></a>
-                
-                <a class="text-danger" href="/artist/delete/@artist.Id"><i class="far fa-trash-alt"></i></a>
-            </td>
-        </tr>
+<tr>
+    <td><a href="/artist/details/@artist.Id" class="text-success">@artist.Name</a></td>
+    <td>@artist.Description</td>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <td>
+            <a class="text-light mr-2" href="/artist/edit/@artist.Id"><i class="far fa-edit"></i></a>
+
+            <a class="text-danger" href="/artist/delete/@artist.Id"><i class="far fa-trash-alt"></i></a>
+        </td>
+    }
+</tr>
     }
     <tr>
 

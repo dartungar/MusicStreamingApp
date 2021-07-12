@@ -12,16 +12,15 @@
     <form method="post" class="form">
         <div class="validation text-danger" asp-validation-summary="ModelOnly"></div>
         <div class="form-group">
-            <input type="text" asp-for="Login" placeholder="Enter login" class="form-control" />
+            <input type="text" asp-for="Login" placeholder="Login" class="form-control" />
             <span asp-validation-for="Login" class="text-danger small"></span>
         </div>
         <div class="form-group">
-            <input type="password" asp-for="Password" placeholder="Enter login" class="form-control" />
+            <input type="password" asp-for="Password" placeholder="Password" class="form-control" />
             <span asp-validation-for="Password" class="text-danger small"></span>
         </div>
         <div class="form-group mt-4">
-            <button type="submit" class="btn btn-success mr-3">Login</button>
-            <a class="btn btn-secondary" href="/artist"> Back</a>
+            <button type="submit" class="btn btn-success mr-3 btn-block">Login</button>
         </div>
 
     </form>
