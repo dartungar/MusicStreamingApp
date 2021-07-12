@@ -8,10 +8,12 @@ namespace Service.DTO
 {
     public class TrackDto
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string Name { get; set; }
         public int Length { get; set; }
         public List<Guid> ArtistsIds { get; set; }
+        public List<string> ArtistsNames { get; set; }
         public Guid AlbumId { get; set; }
+        public string AlbumName { get; set; }
     }
 }

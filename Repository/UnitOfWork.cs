@@ -16,12 +16,12 @@ namespace Repository
         private GenericRepository<AddressElement> addressElementRepository;
         private GenericRepository<AddressElementType> addressElementTypeRepository;
         private GenericRepository<Album> albumRepository;
-        private GenericRepository<Artist> artistRepository;
-        private GenericRepository<Playlist> playlistRepository;
-        private GenericRepository<Track> trackRepository;
-        private GenericRepository<User> userRepository;
 
-        // Если найду способ обращаться к репозиториям на основе типа, получится лучше абстрагировать сервисы в GenericService
+        private GenericRepository<Artist> artistRepository;
+        private GenericRepository<Track> trackRepository;
+        private GenericRepository<TrackArtist> trackArtistRepository;
+        private GenericRepository<Playlist> playlistRepository;
+        private GenericRepository<User> userRepository;
 
         public GenericRepository<Address> AddressRepository
         {
@@ -111,6 +111,19 @@ namespace Repository
                 }
 
                 return trackRepository;
+            }
+        }
+
+        public GenericRepository<TrackArtist> TrackArtistRepository
+        {
+            get
+            {
+                if (trackArtistRepository == null)
+                {
+                    trackArtistRepository = new GenericRepository<TrackArtist>(context);
+                }
+
+                return trackArtistRepository;
             }
         }
 

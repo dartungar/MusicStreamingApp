@@ -57,7 +57,7 @@ namespace Repository
                 
                 optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
 
-                optionsBuilder.LogTo(System.Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Error);
+                optionsBuilder.LogTo(System.Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Trace);
             }
         }
 

@@ -9,9 +9,9 @@
     </div>
 
     <div class="m-5 px-3 py-5">
-        <form class="form">
+        <form class="form" method="post" asp-controller="Track" asp-action="Search">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search tracks..." />
+                <input type="text" name="query" class="form-control" placeholder="Search tracks by name, artist, or album..." min="3" required/>
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-success"><i class="fa fa-search"></i></button>
                 </div>

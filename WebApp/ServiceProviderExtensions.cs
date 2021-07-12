@@ -23,6 +23,7 @@ namespace WebApp
 
             // add services
             services.AddScoped<ArtistService>();
+            services.AddScoped<TrackService>();
             services.AddScoped<UserService>();
             services.AddScoped<AuthService>();
         }
