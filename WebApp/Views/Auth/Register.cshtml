@@ -7,60 +7,62 @@
     ViewData["Title"] = "Register";
 }
 
-<h4>Register</h4>
-<form method="post" class="form">
-    <div class="validation text-danger" asp-validation-summary="ModelOnly"></div>
-    <div class="form-group">
-        <label asp-for="Login"></label>
-        <input type="text" asp-for="Login" placeholder="Enter login" class="form-control" />
-        <span asp-validation-for="Login" class="text-danger small"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input type="password" asp-for="Password" placeholder="Enter password, must be 6 or more characters long" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger small"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input type="text" asp-for="Name" placeholder="Enter name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger small"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input type="text" asp-for="Email" placeholder="Enter email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger small"></span>
-    </div>
-    <h4>Address</h4>
-    <div class="form-group">
-        <label asp-for="Address.Country.Value">Country</label>
-        <input type="text" asp-for="Address.Country.Value" placeholder="Enter your country" class="form-control" />
-        <span asp-validation-for="Address.Country.Value" class="text-danger small"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Address.Region.Value">Region / State</label>
-        <input type="text" asp-for="Address.Region.Value" placeholder="Enter your region or state" class="form-control" />
-        <span asp-validation-for="Address.Region.Value" class="text-danger small"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Address.City.Value">City</label>
-        <input type="text" asp-for="Address.City.Value" placeholder="Enter your city" class="form-control" />
-        <span asp-validation-for="Address.City.Value" class="text-danger small"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Address.Street.Value">Street</label>
-        <input type="text" asp-for="Address.Street.Value" placeholder="Enter your street" class="form-control" />
-        <span asp-validation-for="Address.Street.Value" class="text-danger small"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Address.House">House</label>
-        <input type="text" asp-for="Address.House" placeholder="Enter your house" class="form-control" />
-        <span asp-validation-for="Address.House" class="text-danger small"></span>
-    </div>
-    <div class="form-group mt-4">
-        <button type="submit" class="btn btn-success mr-3">Register</button>
-        <a class="btn btn-secondary" href="/artist"> Back</a>
-    </div>
+<div class="narrow-container">
+    <h4>Register</h4>
+    <form method="post" class="form">
+        <div class="validation text-danger" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group">
+            <label asp-for="Login"></label>
+            <input type="text" asp-for="Login" placeholder="Enter login" class="form-control" />
+            <span asp-validation-for="Login" class="text-danger small"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password"></label>
+            <input type="password" asp-for="Password" placeholder="Enter password, must be 6 or more characters long" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input type="text" asp-for="Name" placeholder="Enter name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger small"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <input type="text" asp-for="Email" placeholder="Enter email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+        <h5>Address</h5>
+        <div class="form-group">
+            <label asp-for="Address.Country.Value">Country</label>
+            <input type="text" asp-for="Address.Country.Value" placeholder="Enter your country" class="form-control" />
+            <span asp-validation-for="Address.Country.Value" class="text-danger small"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Address.Region.Value">Region / State</label>
+            <input type="text" asp-for="Address.Region.Value" placeholder="Enter your region or state" class="form-control" />
+            <span asp-validation-for="Address.Region.Value" class="text-danger small"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Address.City.Value">City</label>
+            <input type="text" asp-for="Address.City.Value" placeholder="Enter your city" class="form-control" />
+            <span asp-validation-for="Address.City.Value" class="text-danger small"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Address.Street.Value">Street</label>
+            <input type="text" asp-for="Address.Street.Value" placeholder="Enter your street" class="form-control" />
+            <span asp-validation-for="Address.Street.Value" class="text-danger small"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Address.House">House</label>
+            <input type="text" asp-for="Address.House" placeholder="Enter your house" class="form-control" />
+            <span asp-validation-for="Address.House" class="text-danger small"></span>
+        </div>
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-success mr-3">Register</button>
+            <a class="btn btn-secondary" href="/artist"> Back</a>
+        </div>
 
-</form>
+    </form>
+</div>
 
 @await Html.PartialAsync("../Shared/_ValidationScriptsPartial")
