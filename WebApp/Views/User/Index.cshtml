@@ -12,19 +12,29 @@
             <th>Login</th>
             <th>Name</th>
             <th>Email</th>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <th>Actions</th>
+            }
         </tr>
     </thead>
     @foreach (var user in Model)
     {
-        <tr>
-            <td><a href="/user/details/@user.Id" class="text-success">@user.Login</a></td>
-            <td>@user.Name</td>
-            <td>@user.Email</td>
+<tr>
+    <td><a href="/user/details/@user.Id" class="text-success">@user.Login</a></td>
+    <td>@user.Name</td>
+    <td>@user.Email</td>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <td>
+            <a class="text-light mr-2" href="/user/edit/@user.Id"><i class="far fa-edit"></i></a>
 
-        </tr>
+            <a class="text-danger" href="/user/delete/@user.Id"><i class="far fa-trash-alt"></i></a>
+        </td>
     }
-    <tr>
-    </tr>
+</tr>
+    }
+
 
 
 </table>

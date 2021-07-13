@@ -8,6 +8,9 @@ using Service;
 
 namespace WebApp
 {
+    /// <summary>
+    /// Extension method for adding custom services
+    /// </summary>
     public static class ServiceProviderExtensions
     {
         /// <summary>
@@ -25,6 +28,7 @@ namespace WebApp
             services.AddScoped<ArtistService>();
             services.AddScoped<TrackService>();
             services.AddScoped<UserService>();
+            services.AddScoped<AddressService>();
             services.AddScoped<AuthService>();
         }
     }

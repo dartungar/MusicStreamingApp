@@ -27,7 +27,6 @@ namespace Service
 
             var configToDto = new MapperConfiguration(cfg =>
             {
-                // игнорируем пароль
                 cfg.CreateMap<User, UserDto>();
                 cfg.CreateMap<Address, AddressDto>();
                 cfg.CreateMap<AddressElement, AddressElementDto>();
@@ -69,12 +68,51 @@ namespace Service
             User oldUser = _unitOfWork.UserRepository.GetById((Guid)userDto.Id);
             if (oldUser == null)
                 throw new Exception("Пользователь не найден");
+            oldUser.Address = _unitOfWork.AddressRepository.GetById(oldUser.AddressId);
+            
 
             User newUser = FromDto(userDto);
+            newUser.PasswordHash = oldUser.PasswordHash;
 
+            // если адресный элемент изменился, создаем его
+            // TO DO: количество трудночитаемого повторяющегося кода намекает что есть решение изящнее
+            // TO DO: сначала искать существующий адресный элемент
+            if (!oldUser.Address.Country.Value.Equals(newUser.Address.Country.Value))
+            {
+                _unitOfWork.AddressElementRepository.Insert(newUser.Address.Country);
+            }
+            else newUser.Address.Country = oldUser.Address.Country;
+
+            if ((oldUser.Address.Region == null || !oldUser.Address.Region.Value.Equals(newUser.Address.Region.Value)))
+            {
+                if (newUser.Address.Region.Value != null)
+                    _unitOfWork.AddressElementRepository.Insert(newUser.Address.Region);
+            }
+            else newUser.Address.Region = oldUser.Address.Region;
+
+            if (!oldUser.Address.City.Value.Equals(newUser.Address.City.Value))
+            {
+                _unitOfWork.AddressElementRepository.Insert(newUser.Address.City);
+            }
+            else newUser.Address.City = oldUser.Address.City;
+
+            if (oldUser.Address.Street == null || !oldUser.Address.Street.Value.Equals(newUser.Address.Street.Value))
+            {
+                if (newUser.Address.Street.Value != null)
+                    _unitOfWork.AddressElementRepository.Insert(newUser.Address.Street);
+            }
+            else newUser.Address.Street = oldUser.Address.Street;
+
+            oldUser.Address.Country = newUser.Address.Country;
+            oldUser.Address.City = newUser.Address.City; 
+            oldUser.Address.Region = newUser.Address.Region;
+            oldUser.Address.Street = newUser.Address.Street;
             _unitOfWork.UserRepository.Update(oldUser, newUser);
+            oldUser = newUser;
+            
             _unitOfWork.Save();
         }
+
 
         public void Delete(UserDto userDto)
         {

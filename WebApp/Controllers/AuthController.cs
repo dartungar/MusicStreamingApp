@@ -47,7 +47,7 @@ namespace WebApp.Controllers
             catch (Exception)
             {
                 // если неправильный пароль, давать нормальную обратную связь об этом
-                TempData["Error"] = "Ошибка авторизации. Попробуйте еще раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Authorization error. Please try again or contact support@treolan.ru";
                 return View();
             }
             
@@ -71,12 +71,12 @@ namespace WebApp.Controllers
             try
             {
                 await _service.Register(userDto);
-                TempData["Success"] = $"Добро пожаловать, {userDto.Name}!";
+                TempData["Success"] = $"Welcome, {userDto.Name}!";
                 return Redirect("/");
             }
             catch
             {
-                TempData["Error"] = "Ошибка при регистрации пользователя. Попробуйте еще раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Error while registering. Please try again or contact support@treolan.ru";
                 return View();
             }
         }

@@ -17,6 +17,7 @@ namespace Service.DTO
         public string Name { get; set; }
         [EmailAddress(ErrorMessage = "Invalid e-mail address")]
         public string Email { get; set; }
+        public Guid? AddressId { get; set; }
         public AddressDto Address { get; set; }
     }
 }

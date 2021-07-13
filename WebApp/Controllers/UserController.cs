@@ -14,10 +14,12 @@ namespace WebApp.Controllers
     public class UserController : Controller
     {
         private readonly UserService _service;
+        private readonly AddressService _addressService;
 
-        public UserController(UserService userService) : base()
+        public UserController(UserService userService, AddressService addressService) : base()
         {
             _service = userService;
+            _addressService = addressService;
         }
 
         // GET: User
@@ -31,12 +33,9 @@ namespace WebApp.Controllers
         [Authorize]
         public ActionResult Details(Guid id)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-
-            }
             UserDto user = _service.GetById(id);
             if (user == null) return NotFound();
+            user.Address = _addressService.GetById((Guid)user.AddressId);
             return View(user);
         }
 
@@ -61,12 +60,12 @@ namespace WebApp.Controllers
             try
             {
                 _service.Add(userDto);
-                TempData["Success"] = "Пользователь зарегистрирован";
+                TempData["Success"] = "Welcome!";
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                TempData["Error"] = "Ошибка при регистрации пользователя. Попробуйте еще раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Error while registeting. Please try again or contact support@treolan.ru";
                 return View();
             }
         }
@@ -78,6 +77,8 @@ namespace WebApp.Controllers
             UserDto user = _service.GetById(id);
             if (user == null)
                 return NotFound();
+            user.Address = _addressService.GetById((Guid)user.AddressId);
+
             return View(user);
         }
 
@@ -95,13 +96,13 @@ namespace WebApp.Controllers
             try
             {
                 _service.Update(userDto);
-                TempData["Success"] = "Изменения сохранены";
+                //_addressService.Update(userDto.Address);
+                TempData["Success"] = "Saved changes";
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                // TODO: показывать сообщение об ошибке (передавать во вьюшку видимо? + в общем лэйауте место под это)
-                TempData["Error"] = "Ошибка при сохранении изменений. Попробуйте ещё раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Error while saving changes. Please try again or contact support@treolan.ru";
                 return View();
             }
         }
@@ -113,12 +114,12 @@ namespace WebApp.Controllers
             try
             {
                 _service.Delete(id);
-                TempData["Success"] = "Пользователь удален";
+                TempData["Success"] = "User deleted";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)
             {
-                TempData["Error"] = "Ошибка при удалении пользователя. Попробуйте ещё раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Error while deleting user. Please try again or contact support@treolan.ru";
                 return RedirectToAction(nameof(Index));
             }
             

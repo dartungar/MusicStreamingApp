@@ -56,12 +56,12 @@ namespace WebApp.Controllers
             try
             {
                 _service.Add(artistDto);
-                TempData["Success"] = "Исполнитель создан";
+                TempData["Success"] = "Created artist";
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                TempData["Error"] = "Ошибка при создании исполнителя. Попробуйте еще раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Error while creating artist. Please try again or contact support@treolan.ru";
                 return View();
             }
         }
@@ -90,13 +90,13 @@ namespace WebApp.Controllers
             try
             {
                 _service.Update(artistDto);
-                TempData["Success"] = "Изменения сохранены";
+                TempData["Success"] = "Saved changes";
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
                 // TODO: показывать сообщение об ошибке (передавать во вьюшку видимо? + в общем лэйауте место под это)
-                TempData["Error"] = "Ошибка при сохранении изменений. Попробуйте ещё раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Error while saving changes. Please try again or contact support@treolan.ru";
                 return View();
             }
         }
@@ -108,12 +108,12 @@ namespace WebApp.Controllers
             try
             {
                 _service.Delete(id);
-                TempData["Success"] = "Исполнитель удален";
+                TempData["Success"] = "Deleted artist";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)
             {
-                TempData["Error"] = "Ошибка при удалении исполнителя. Попробуйте ещё раз или напишите на support@treolan.ru";
+                TempData["Error"] = "Error while deleting artist. Please try again or contact support@treolan.ru";
                 return RedirectToAction(nameof(Index));
             }
             

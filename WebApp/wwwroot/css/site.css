@@ -80,6 +80,6 @@ header, footer {
     width: min(90%, 350px);
 }
 
-.centered-container {
+.container-centered-verically {
     margin: 30vh auto 0;
 }

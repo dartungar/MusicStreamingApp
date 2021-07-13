@@ -7,6 +7,9 @@ using Repository.Models;
 
 namespace Repository
 {
+    /// <summary>
+    /// Contains repositories
+    /// </summary>
     public class UnitOfWork : IDisposable
     {
         private ApplicationContext context = new ApplicationContext();

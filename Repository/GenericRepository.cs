@@ -9,6 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
+    /// <summary>
+    /// Generic repository with CRUD operations
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
     public class GenericRepository<TEntity> where TEntity : class
     {
         internal ApplicationContext context;

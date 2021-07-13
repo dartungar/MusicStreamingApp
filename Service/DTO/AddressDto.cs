@@ -6,10 +6,19 @@ namespace Service.DTO
     public class AddressDto
     {
         public Guid? Id { get; set; }
+
+        public Guid? CountryId { get; set; }
         public AddressElementDto Country { get; set; }
+
+        public Guid? RegionId { get; set; }
         public AddressElementDto Region { get; set; }
+
+        public Guid? CityId { get; set; }
         public AddressElementDto City { get; set; }
+
+        public Guid? StreetId { get; set; }
         public AddressElementDto Street { get; set; }
+
         public string House { get; set; }
     }
 }
