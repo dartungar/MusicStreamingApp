@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,6 +36,12 @@ namespace WebApp
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/auth/login");
                 });
             services.AddControllersWithViews();
+            // add Client (AngularJS) app
+            services.AddSpaStaticFiles(cfg =>
+            {
+                // AngularJS не транспилируется, поэтому подаем исходные файлы
+                cfg.RootPath = "ClientApp/app";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +59,13 @@ namespace WebApp
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            // если в боевой среде, подаем статические файлы
+/*            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }*/
+            // всегда подаем статические файлы, т.к AngularJS компилировать не надо
+            app.UseSpaStaticFiles();
 
             app.UseRouting();
 
@@ -63,6 +77,16 @@ namespace WebApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+                // если в dev-среде, то запускаем сервер node
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
             });
         }
     }
