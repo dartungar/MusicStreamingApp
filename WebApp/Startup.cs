@@ -85,7 +85,7 @@ namespace WebApp
                 // если в dev-среде, то запускаем сервер node
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    //spa.UseAngularCliServer(npmScript: "start");
                 }
             });
         }

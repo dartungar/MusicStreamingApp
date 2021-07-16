@@ -51,26 +51,31 @@ namespace WebApp.Controllers
         }
 
         // POST: artist/Create
+        // API controller
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // валидация токена мешает обработке запроса, но как именно - не смог понять
+        // падает 400 не доходя до контроллера
+        // [ValidateAntiForgeryToken] 
         [Authorize]
-        public ActionResult Create([FromForm]ArtistDto artistDto)
+        public ActionResult Create([FromBody]ArtistDto artistDto)
         {
             if (!ModelState.IsValid)
             {
-                return View(artistDto);
+                TempData["Error"] = "Incorrect data. Please fill in correct data and try again";
+                return StatusCode(400);
             }
+
 
             try
             {
                 _service.Add(artistDto);
                 TempData["Success"] = "Created artist";
-                return RedirectToAction(nameof(Index));
+                return StatusCode(201);
             }
             catch
             {
                 TempData["Error"] = "Error while creating artist. Please try again or contact support@treolan.ru";
-                return View();
+                return StatusCode(500);
             }
         }
 

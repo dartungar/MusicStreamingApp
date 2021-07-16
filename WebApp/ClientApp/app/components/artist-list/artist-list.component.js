@@ -5,9 +5,9 @@
             
             controller: function artistListController(artistService, $http) {
                 var self = this;
-                this.artists = [];
+                self.artists = [];
 
-                this.loadArtists = function () {
+                self.loadArtists = function () {
                     artistService.getList().then(
                         // on success, set state to received data
                         function (res) {
@@ -21,7 +21,7 @@
                     );
                 }
 
-                this.loadArtists();
+                self.loadArtists();
 
             },
             templateUrl: "/components/artist-list/artist-list.template.html" 
