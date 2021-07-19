@@ -4,12 +4,19 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
+using Service;
 using Service.DTO;
 using Repository.Models;
 
 
-namespace Service
+namespace WebApp
 {
+    public class LoginDto
+    {
+        public string Login { get; set; }
+        public string Password { get; set; }
+    }
+
     public class AuthService
     {
 

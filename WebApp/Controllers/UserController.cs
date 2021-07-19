@@ -96,7 +96,6 @@ namespace WebApp.Controllers
             try
             {
                 _service.Update(userDto);
-                //_addressService.Update(userDto.Address);
                 TempData["Success"] = "Saved changes";
                 return RedirectToAction(nameof(Index));
             }

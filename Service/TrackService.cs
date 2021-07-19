@@ -11,12 +11,20 @@ namespace Service
 {
     public class TrackService: BaseService<Track, TrackDto>
     {
-        public TrackService(UnitOfWork unitOfWork) : base(unitOfWork)
+        private readonly TrackRepository _trackRepository;
+
+        public TrackService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
+            _trackRepository = new TrackRepository(unitOfWork.Context);
+            
             var configFromDto = new MapperConfiguration(cfg =>
             {
                 // TO DO: продумать создание / изменение треков
-                cfg.CreateMap<TrackDto, Track>();
+                cfg.CreateMap<TrackDto, Track>()
+                  // если передан пустой ID, то генерируем новый
+                  .ForMember(
+                    track => track.Id, opts => opts.MapFrom(
+                        src => src.Id == Guid.Empty ? Guid.NewGuid() : src.Id));
 
             });
             MapperFromDto = configFromDto.CreateMapper();
@@ -41,105 +49,64 @@ namespace Service
 
         public override TrackDto GetById(Guid id)
         {
-            Track track = _unitOfWork.TrackRepository.GetById(id);
+            Track track = _trackRepository.GetById(id);
             if (track == null) throw new Exception("Трек не найден");
-            track.TrackArtists = GetTrackArtists(track.Id);
-            track.Album = GetAlbum(track.AlbumId);
+/*            track.TrackArtists = GetTrackArtists(track.Id);
+            track.Album = GetAlbum(track.AlbumId);*/
             return ToDto(track);
         }
 
         public override List<TrackDto> Get(Expression<Func<Track, bool>> filter = null)
         {
-            var tracks = (List<Track>)_unitOfWork.TrackRepository.Get(filter);
-            foreach (var track in tracks)
-            {
-                track.TrackArtists = GetTrackArtists(track.Id);
-                foreach(TrackArtist ta in track.TrackArtists)
-                {
-                    ta.Artist = GetArtist(ta.ArtistId);
-                }
-                track.Album = GetAlbum(track.AlbumId);
-            }
+            var tracks = (List<Track>)_trackRepository.Get(filter);
             return tracks.Select(a => ToDto(a)).ToList();
-        }
-
-        // доп. запросы нужны, т.к пока не понял, как совместить Eager loading и generic-репозиторий
-        private Album GetAlbum(Guid albumId)
-        {
-            return _unitOfWork.AlbumRepository.Get(alb => alb.Id == albumId).FirstOrDefault();
-        }
-
-        private List<TrackArtist> GetTrackArtists(Guid trackId)
-        {
-            return _unitOfWork.TrackArtistRepository.Get(tra => tra.TrackId == trackId).ToList();
-        }
-
-        private Artist GetArtist(Guid id)
-        {
-            return _unitOfWork.ArtistRepository.Get(a => a.Id == id).FirstOrDefault();
-
         }
 
         public override void Add(TrackDto TrackDto)
         {
             Track Track = FromDto(TrackDto);
-            _unitOfWork.TrackRepository.Insert(Track);
+            _trackRepository.Insert(Track);
             _unitOfWork.Save();
         }
 
         public override void Add(Track Track)
         {
-            _unitOfWork.TrackRepository.Insert(Track);
+            _trackRepository.Insert(Track);
             _unitOfWork.Save();
         }
 
         public override void Update(TrackDto TrackDto)
         {
-            if (TrackDto.Id == null)
+            if (TrackDto.Id == Guid.Empty)
                 throw new Exception("Для изменения данных трека необходимо указать его ID");
 
             // кастим Guid? -> Guid, т.к провели проверку на NULL
             // наверное есть более каноничный способ?..
-            Track oldTrack = _unitOfWork.TrackRepository.GetById((Guid)TrackDto.Id);
+            Track oldTrack = _trackRepository.GetById((Guid)TrackDto.Id);
             if (oldTrack == null)
                 throw new Exception("Исполнитель не найден");
 
             Track newTrack = FromDto(TrackDto);
 
-            _unitOfWork.TrackRepository.Update(oldTrack, newTrack);
+            _trackRepository.Update(oldTrack, newTrack);
             _unitOfWork.Save();
         }
 
 
         public void Delete(TrackDto TrackDto)
         {
-            if (TrackDto.Id != null)
+            if (TrackDto.Id != Guid.Empty)
                 Delete((Guid)TrackDto.Id);
             throw new Exception("Для удаления трека необходимо указать его ID");
         }
 
         public override void Delete(Guid id)
         {
-            Track Track = _unitOfWork.TrackRepository.GetById(id);
+            Track Track = _trackRepository.GetById(id);
             if (Track == null)
                 throw new Exception("Трек не найден");
-            _unitOfWork.TrackRepository.Delete(Track);
+            _trackRepository.Delete(Track);
             _unitOfWork.Save();
-        }
-
-        public override Track FromDto(TrackDto TrackDto)
-        {
-            try
-            {
-                Track Track = MapperFromDto.Map<Track>(TrackDto);
-                // TrackDto.Guid? == null бывает в случаях, когда, например, приходят данные для создания нового исполнителя
-                Track.Id = TrackDto.Id ?? Guid.NewGuid();
-                return Track;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
         }
     }
 }

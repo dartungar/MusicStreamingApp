@@ -8,7 +8,7 @@ namespace Service.DTO
 {
     public class AlbumDto
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.Empty;
         public string Name { get; set; }
         public List<TrackDto> TracksList { get; set; }
         public List<Guid> Artists { get; set; }

@@ -9,7 +9,7 @@ namespace Service.DTO
 {
    public class UserDto
     {
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; } = Guid.Empty;
         public string Login { get; set; }
         [MinLength(6, ErrorMessage = "Password must be minimum 6 characters long")]
         public string Password { get; set; }

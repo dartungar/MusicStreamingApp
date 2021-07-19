@@ -7,7 +7,7 @@ namespace Service.DTO
 {
     public class ArtistDto
     {
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; } = Guid.Empty;
 
         [Required(ErrorMessage = "Name is required")]
         [StringLength(50, ErrorMessage = "Name must be 50 characters at maximum")]

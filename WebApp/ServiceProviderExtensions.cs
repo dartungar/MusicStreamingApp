@@ -19,10 +19,7 @@ namespace WebApp
         /// <param name="services"></param>
         public static void AddEntityServices(this IServiceCollection services)
         {
-            // TO DO: разумно ли создавать Unit Of Work как Singleton?
-            // +: меньше запросов к БД, вроде бы меньше нагрузки
-            // -: вроде как копит утечки памяти, может сильно разрастись
-            services.AddSingleton<UnitOfWork>();
+            services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 
             // add services
             services.AddScoped<ArtistService>();
