@@ -1,15 +1,16 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model List<Service.DTO.ArtistDto>
 @{
     ViewData["Title"] = "Artists";
 }
 <div ng-app="clientApp">
     @* Angular component for the list of Artists  *@
     <artist-list></artist-list>
+    
 
-    <script src="components/artist-list/artist-list.component.js"></script>
+
+    <script src="/components/artist-list/artist-list.component.js"></script>
 
 </div>
 

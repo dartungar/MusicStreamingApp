@@ -5,10 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Nikofy</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @* Order is important: JQuery -> AngularJS -> DevExtreme *@
+    <!-- JQuery -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://kit.fontawesome.com/330ee55ff0.js" crossorigin="anonymous"></script>
+    <!-- ClientApp -->
     <script src="/lib/angular/angular.js"></script>
     <script src="/clientApp.js"></script>
     <script src="/services/artist.service.js"></script>
+    <!-- DevExtreme -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/devextreme/21.1.4/js/dx.all.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/devextreme/21.1.4/css/dx.dark.css" rel="stylesheet">
+
 
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
@@ -79,9 +89,7 @@
             &copy; 2021 - Nikofy, Inc.
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
