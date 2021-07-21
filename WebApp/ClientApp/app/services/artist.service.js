@@ -6,11 +6,6 @@
             '$http',
             function ($http) {
                 var apiUrl = '/artist';
-                var requestConfig = {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }
 
                 return {
                     // get all artists
@@ -26,6 +21,7 @@
 
                     // create artist
                     create: function (artistData) {
+                        console.log('calling artistService.create', artistData)
                         return $http({
                             url: `${apiUrl}/create`,
                             method: 'POST',
@@ -38,7 +34,15 @@
 
                     // update artist by ID
                     update: function (artistId, artistData) {
-                        return $http.post(`${apiUrl}/edit/${artistId}`, artistData, requestConfig);
+                        console.log('calling artistService.update', artistId, artistData)
+                        return $http({
+                            url: `${apiUrl}/edit/${artistId}`,
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: JSON.stringify(artistData)
+                        });
                     },
 
                     // delete artist
