@@ -23,6 +23,37 @@
                             }
                         );
                     },
+                    update: function (key, values) {
+                        return artistService.update(key, values).then(
+                            function (res) {
+                                console.log("updated artist", res);
+                            },
+                            function () {
+                                console.log("error updating artist")
+                            }
+                        );
+                    },
+                    insert: function (values) {
+                        return artistService.create(values).then(
+                            function (res) {
+                                console.log("created artist", res);
+                            },
+                            function () {
+                                console.log("error creating artist")
+                            }
+                        );
+                    },
+                    remove: function (key) {
+                        return artistService.delete(key).then(
+                            function (res) {
+                                console.log("deleted artist", res);
+                            },
+                            function () {
+                                console.log("error deleting artist")
+                            }
+                        );
+                    },
+
                 })
 
                 $scope.dataGridOptions = {
@@ -46,6 +77,15 @@
                         visible: true,
                         highlightCaseSensitive: true
                     },
+                    editing: {
+                        mode: "row",
+                        allowUpdating: true,
+                        allowDeleting: true,
+                        allowAdding: true
+                    },
+                    onSaved: function (e) {
+                        console.log(e);
+                    }
                 }
 
                 //self.loadArtists();

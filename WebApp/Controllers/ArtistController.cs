@@ -56,9 +56,14 @@ namespace WebApp.Controllers
         // валидация токена мешает обработке запроса, но как именно - не смог понять
         // падает 400 не доходя до контроллера
         // [ValidateAntiForgeryToken] 
-        [Authorize]
+        //[Authorize]
         public ActionResult Create([FromBody]ArtistDto artistDto)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return StatusCode(401);
+            }
+            
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Incorrect data. Please fill in correct data and try again";
@@ -92,9 +97,14 @@ namespace WebApp.Controllers
         // POST: artist/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        //[Authorize]
         public ActionResult Edit([FromForm] ArtistDto artistDto)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return StatusCode(401);
+            }
+
             if (!ModelState.IsValid)
             {
                 return View();
@@ -115,9 +125,14 @@ namespace WebApp.Controllers
         }
 
         // GET: artist/Delete/5
-        [Authorize]
+        // [Authorize]
         public ActionResult Delete(Guid id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return StatusCode(401);
+            }
+
             try
             {
                 _service.Delete(id);
