@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace Repository.Models
+namespace Domain.Models
 {
     public partial class Image
     {

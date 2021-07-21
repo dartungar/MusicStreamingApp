@@ -6,8 +6,9 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Domain;
 
-namespace Repository
+namespace DAL.EF
 {
     /// <summary>
     /// Generic repository with CRUD operations
@@ -21,6 +22,12 @@ namespace Repository
         public GenericRepository(ApplicationContext context)
         {
             this.context = context;
+            this.dbSet = context.Set<TEntity>();
+        }
+
+        public GenericRepository(IUnitOfWork unitOfWork)
+        {
+            this.context = unitOfWork.Context;
             this.dbSet = context.Set<TEntity>();
         }
 

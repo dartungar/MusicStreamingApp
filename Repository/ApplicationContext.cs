@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Repository.Models;
+using Domain.Models;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
 #nullable disable
 
-namespace Repository
+namespace DAL.EF
 {
     public partial class ApplicationContext : DbContext
     {

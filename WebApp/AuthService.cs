@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Service;
 using Service.DTO;
-using Repository.Models;
+using Domain.Models;
 
 
 namespace WebApp

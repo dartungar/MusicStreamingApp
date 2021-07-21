@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper;
-using Repository;
-using Repository.Models;
+using DAL.EF;
+using Domain.Models;
 using Service.DTO;
 
 namespace Service

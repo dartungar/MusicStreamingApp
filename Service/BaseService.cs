@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Repository;
+using DAL.EF;
 using AutoMapper;
 
 namespace Service

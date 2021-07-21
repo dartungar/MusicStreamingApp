@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Repository;
-using Repository.Models;
+using DAL.EF;
+using Domain;
+using Domain.Models;
 using Service.DTO;
 using AutoMapper;
 
@@ -12,9 +13,9 @@ namespace Service
     public class ArtistService : BaseService<Artist, ArtistDto>
     {
         private readonly IGenericRepository<Artist> _artistRepository;
-        public ArtistService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        public ArtistService(IUnitOfWork unitOfWork, IGenericRepository<Artist> artistRepo) : base(unitOfWork)
         {
-            _artistRepository = new GenericRepository<Artist>(unitOfWork.Context);
+            _artistRepository = artistRepo;
             
             var configFromDto = new MapperConfiguration(cfg =>
                 cfg.CreateMap<ArtistDto, Artist>()

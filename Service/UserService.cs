@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper;
-using Repository;
-using Repository.Models;
+using DAL.EF;
+using Domain;
+using Domain.Models;
 using Service.DTO;
 
 namespace Service
@@ -13,9 +14,14 @@ namespace Service
     {
         private readonly IGenericRepository<User> _userRepository;
         private readonly IGenericRepository<AddressElementType> _addressElementTypeRepository;
-        public UserService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        public UserService(
+            IUnitOfWork unitOfWork, 
+            IGenericRepository<User> userRepo, 
+            IGenericRepository<AddressElementType> addressElementTypeRepo) 
+            : base(unitOfWork)
         {
-            _userRepository = new GenericRepository<User>(unitOfWork.Context);
+            _userRepository = userRepo;
+            _addressElementTypeRepository = addressElementTypeRepo;
             
             // переопределяем маппинг
             // обеспечиваем поддержку маппинга для вложенных объектов
@@ -79,8 +85,8 @@ namespace Service
             User newUser = FromDto(userDto);
             newUser.PasswordHash = oldUser.PasswordHash;
 
-            AddressService addressService = new AddressService(_unitOfWork);
-            addressService.Update(userDto.Address);
+            //AddressService addressService = new AddressService(_unitOfWork);
+            //addressService.Update(userDto.Address);
 
             _userRepository.Update(oldUser, newUser);
             

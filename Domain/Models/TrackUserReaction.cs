@@ -3,15 +3,16 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace Repository.Models
+namespace Domain.Models
 {
-    public partial class UserSubscription
+    public partial class TrackUserReaction
     {
         public Guid Id { get; set; }
+        public Guid TrackId { get; set; }
         public Guid UserId { get; set; }
-        public DateTime DateBegin { get; set; }
-        public DateTime DateEnd { get; set; }
+        public bool? IsLike { get; set; }
 
+        public virtual Track Track { get; set; }
         public virtual User User { get; set; }
     }
 }

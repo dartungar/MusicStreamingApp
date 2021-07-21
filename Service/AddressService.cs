@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Repository;
-using Repository.Models;
+using Domain;
+using Domain.Models;
+using DAL.EF;
 using AutoMapper;
 using System.Linq;
 using Service.DTO;
@@ -15,12 +16,17 @@ namespace Service
         private readonly IGenericRepository<AddressElement> _addressElementRepository;
         private readonly IGenericRepository<AddressElementType> _addressElementTypeRepository;
 
-        public AddressService(IUnitOfWork unitOfWork): base(unitOfWork)
+        public AddressService(
+            IUnitOfWork unitOfWork, 
+            IGenericRepository<Address> addressRepo,
+            IGenericRepository<AddressElement> addressElementRepo,
+            IGenericRepository<AddressElementType> addressElementTypeRepo
+            ) : base(unitOfWork)
         {
             // init repositories
-            _addressRepository = new GenericRepository<Address>(unitOfWork.Context);
-            _addressElementRepository = new GenericRepository<AddressElement>(unitOfWork.Context);
-            _addressElementTypeRepository = new GenericRepository<AddressElementType>(unitOfWork.Context);
+            _addressRepository = addressRepo;
+            _addressElementRepository = addressElementRepo;
+            _addressElementTypeRepository = addressElementTypeRepo;
 
             // configure custom mapping
             var configFromDto = new MapperConfiguration(cfg =>

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace Repository.Models
+namespace Domain.Models
 {
-    public partial class UserPlaylist
+    public partial class PlaylistFolder
     {
         public Guid Id { get; set; }
-        public Guid UserId { get; set; }
         public Guid PlaylistId { get; set; }
+        public Guid FolderId { get; set; }
 
+        public virtual UserFolder Folder { get; set; }
         public virtual Playlist Playlist { get; set; }
-        public virtual User User { get; set; }
     }
 }

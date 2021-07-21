@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Models;
 
 #nullable disable
 
-namespace Repository.Models
+namespace Domain.Models
 {
     public partial class Address
     {

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
-namespace Repository.Models
+namespace Domain.Models
 {
     public partial class AddressElementType
     {
