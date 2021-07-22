@@ -1,0 +1,41 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<Service.DTO.ArtistDto>
+@{
+    ViewData["Title"] = "Artists";
+}
+
+<h1>Artists</h1>
+<table class="table table-striped table-dark mt-3">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <th>Actions</th>
+            }
+
+        </tr>
+    </thead>
+    @foreach (var artist in Model)
+    {
+<tr>
+    <td><a href="/artist/details/@artist.Id" class="text-success">@artist.Name</a></td>
+    <td>@artist.Description</td>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <td>
+            <a class="text-light mr-2" href="/artist/edit/@artist.Id"><i class="far fa-edit"></i></a>
+
+            <a class="text-danger" href="/artist/delete/@artist.Id"><i class="far fa-trash-alt"></i></a>
+        </td>
+    }
+</tr>
+    }
+
+    
+
+</table>
+<a class="btn btn-success" href="/artist/create"><i class="fas fa-plus mr-2"></i>Add new</a>

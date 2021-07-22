@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center m-5">
+    <div class="my-5 pt-5">
+        <h1 class="text-success"><i class="fas fa-headphones-alt mr-3"></i>NIKOFY</h1>
+        <p> The source of your music</p>
+    </div>
+
+    <div class="m-5 px-3 py-5">
+        <form class="form" method="post" asp-controller="Track" asp-action="Search">
+            <div class="input-group">
+                <input type="text" name="query" class="form-control" placeholder="Search tracks by name, artist, or album..." min="3" required/>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-success"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="card-deck m-5">
+        <div class="card bg-dark">
+            <div class="card-body">
+                <h5 class="card-title">Artists</h5>
+                <p class="card-text">Listen to & follow the best artists</p>
+                <a href="/artist" class="btn btn-success">Browse artists</a>
+            </div>
+
+        </div>
+        <div class="card bg-dark">
+            <div class="card-body">
+                <h5 class="card-title">Tracks</h5>
+                <p class="card-text">Check out the trendiests tracks from all over the world</p>
+                <a href="/track" class="btn btn-success">Browse tracks</a>
+            </div>
+        </div>
+    </div>
+</div>
