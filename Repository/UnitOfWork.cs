@@ -8,7 +8,7 @@ namespace DAL.EF
     public class UnitOfWork : IUnitOfWork
     {
         public ApplicationContext Context { get; set; } = new ApplicationContext();
-        private bool disposed = false;
+        private bool _disposed = false;
 
         public void Save()
         {
@@ -17,14 +17,14 @@ namespace DAL.EF
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (!_disposed)
             {
                 if (disposing)
                 {
                     Context.Dispose();
                 }
             }
-            disposed = true;
+            _disposed = true;
         }
 
         public void Dispose()
