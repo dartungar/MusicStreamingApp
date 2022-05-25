@@ -13,6 +13,8 @@ namespace Service
     {
         private readonly TrackRepository _trackRepository;
 
+        public TrackService() : this(new UnitOfWork()) { }
+
         public TrackService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
             _trackRepository = new TrackRepository(unitOfWork.Context);
@@ -58,8 +60,8 @@ namespace Service
 
         public override List<TrackDto> Get(Expression<Func<Track, bool>> filter = null)
         {
-            var tracks = (List<Track>)_trackRepository.Get(filter);
-            return tracks.Select(a => ToDto(a)).ToList();
+            var tracks = _trackRepository.Get(filter).ToList();
+            return tracks.Select(ToDto).ToList();
         }
 
         public override void Add(TrackDto TrackDto)

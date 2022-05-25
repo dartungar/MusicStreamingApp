@@ -4,9 +4,25 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesktopApp"
+        xmlns:utils="clr-namespace:DesktopApp.Utils"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <utils:IntToMinutesConverter x:Key="IntToMinutesConverter"/>
+    </Window.Resources>
     <Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10px"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="10px"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10px"></RowDefinition>
+            <RowDefinition Height="30px"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="10px"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Button Name="TracksButton" Grid.Column="1" Grid.Row="1" Click="TracksButton_OnClick">Tracks</Button>
+        <Frame Name="MainFrame" Source="UI/Pages/HomePage.xaml" NavigationUIVisibility="Hidden" Grid.Column="1" Grid.Row="2" ></Frame>
     </Grid>
 </Window>
