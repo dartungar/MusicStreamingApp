@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Repository;
+﻿using Microsoft.Extensions.DependencyInjection;
+using DAL.EF;
 using Service;
+using Domain;
+using Domain.Models;
 
 namespace WebApp
 {
@@ -19,10 +17,16 @@ namespace WebApp
         /// <param name="services"></param>
         public static void AddEntityServices(this IServiceCollection services)
         {
-            // TO DO: разумно ли создавать Unit Of Work как Singleton?
-            // +: меньше запросов к БД, вроде бы меньше нагрузки
-            // -: вроде как копит утечки памяти, может сильно разрастись
-            services.AddSingleton<UnitOfWork>();
+            // add UoW
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // add repositories
+            services.AddScoped<IGenericRepository<Artist>, GenericRepository<Artist>>();
+            services.AddScoped(typeof(IGenericRepository<Address>), typeof(GenericRepository<Address>));
+            services.AddScoped(typeof(IGenericRepository<AddressElement>), typeof(GenericRepository<AddressElement>));
+            services.AddScoped(typeof(IGenericRepository<AddressElementType>), typeof(GenericRepository<AddressElementType>));
+            services.AddScoped(typeof(IGenericRepository<Track>), typeof(GenericRepository<Track>));
+            services.AddScoped(typeof(IGenericRepository<User>), typeof(GenericRepository<User>));
 
             // add services
             services.AddScoped<ArtistService>();

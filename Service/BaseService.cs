@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Repository;
+using DAL.EF;
 using AutoMapper;
 
 namespace Service
 {
     public abstract class BaseService<TEntity, TDto> : IService<TEntity, TDto>
     {
-        protected readonly UnitOfWork _unitOfWork;
+        protected readonly IUnitOfWork _unitOfWork;
         public IMapper MapperToDto { get; set; }
         public IMapper MapperFromDto { get; set; }
 
 
-        public BaseService(UnitOfWork unitOfWork)
+        public BaseService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
 

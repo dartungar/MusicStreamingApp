@@ -15,7 +15,6 @@ namespace Service
 
         
         public List<TDto> Get(Expression<Func<TEntity, bool>> filter = null);
-        //public List<TDto> Get(int offset, int limit);
 
         public void Add(TDto dto);
 

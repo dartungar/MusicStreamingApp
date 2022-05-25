@@ -6,14 +6,15 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Domain;
 
-namespace Repository
+namespace DAL.EF
 {
     /// <summary>
     /// Generic repository with CRUD operations
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public class GenericRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         internal ApplicationContext context;
         internal DbSet<TEntity> dbSet;
@@ -24,17 +25,23 @@ namespace Repository
             this.dbSet = context.Set<TEntity>();
         }
 
+        public GenericRepository(IUnitOfWork unitOfWork)
+        {
+            this.context = unitOfWork.Context;
+            this.dbSet = context.Set<TEntity>();
+        }
+
         // поиск с опциональным фильтром
         public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null) 
         {
-            IQueryable<TEntity> query = dbSet;
+            IQueryable<TEntity> result = dbSet;
 
             if (filter != null)
-                {
-                    query = query.Where(filter);
-                }
+            {
+                result = result.Where(filter);
+            }
 
-            return query.ToList();
+            return result.ToList();
 
         }
 
@@ -50,9 +57,6 @@ namespace Repository
         public virtual void Update(TEntity oldEntity, TEntity newEntity) {
             // устанавливаем сущности измененные атрибуты
             context.Entry(oldEntity).CurrentValues.SetValues(newEntity);
-            
-            // указываем, что она изменилась
-            context.Entry(oldEntity).State = EntityState.Modified;
         }
 
         public virtual void Delete(Guid id) {
@@ -62,11 +66,6 @@ namespace Repository
 
         public virtual void Delete (TEntity entity)
         {
-            // проверяем, добавлена ли сущность в контекст; если нет - добавляем
-            if (context.Entry(entity).State == EntityState.Detached)
-            {
-                dbSet.Attach(entity);
-            }
             dbSet.Remove(entity);
         }
     }

@@ -34,7 +34,7 @@ namespace WebApp.Controllers
             var Tracks = _service.Get(t => 
                 t.Name == query  || 
                 t.Album.Name == query ||
-                t.TrackArtists.Where(ta => ta.Artist.Name == query).Any()
+                t.TrackArtists.Any(ta => ta.Artist.Name == query)
                 );
             return View(Tracks);
         }
