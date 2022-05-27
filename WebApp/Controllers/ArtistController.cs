@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Service;
 using Service.DTO;
+using Newtonsoft.Json.Serialization;
 
 
 namespace WebApp.Controllers
@@ -20,14 +21,21 @@ namespace WebApp.Controllers
             _service = artistService;
         }
 
-        // GET: ArtistController
+        // GET: /artist
         public ActionResult Index()
         {
             var artists = _service.Get();
             return View(artists);
         }
 
-        // GET: ArtistController/Details/5
+        // API for Angular app
+        public ActionResult List()
+        {
+            var artists = _service.Get();
+            return Json(artists);
+        }
+
+        // GET: artist/Details/5
         public ActionResult Details(Guid id)
         {
             ArtistDto artist = _service.GetById(id);
@@ -35,38 +43,43 @@ namespace WebApp.Controllers
             return View(artist);
         }
 
-        // GET: ArtistController/Create
+        // GET: artist/Create
         [Authorize]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: ArtistController/Create
+        // POST: artist/Create
+        // API controller
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // валидация токена мешает обработке запроса, но как именно - не смог понять
+        // падает 400 не доходя до контроллера
+        // [ValidateAntiForgeryToken] 
         [Authorize]
-        public ActionResult Create([FromForm]ArtistDto artistDto)
+        public ActionResult Create([FromBody]ArtistDto artistDto)
         {
             if (!ModelState.IsValid)
             {
-                return View(artistDto);
+                TempData["Error"] = "Incorrect data. Please fill in correct data and try again";
+                return StatusCode(400);
             }
+
 
             try
             {
                 _service.Add(artistDto);
                 TempData["Success"] = "Created artist";
-                return RedirectToAction(nameof(Index));
+                return StatusCode(201);
             }
             catch
             {
                 TempData["Error"] = "Error while creating artist. Please try again or contact support@treolan.ru";
-                return View();
+                return StatusCode(500);
             }
         }
 
-        // GET: ArtistController/Edit/5
+        // GET: artist/Edit/5
         [Authorize]
         public ActionResult Edit(Guid id)
         {
@@ -76,7 +89,7 @@ namespace WebApp.Controllers
             return View(artist);
         }
 
-        // POST: ArtistController/Edit/5
+        // POST: artist/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -101,7 +114,7 @@ namespace WebApp.Controllers
             }
         }
 
-        // GET: ArtistController/Delete/5
+        // GET: artist/Delete/5
         [Authorize]
         public ActionResult Delete(Guid id)
         {

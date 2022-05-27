@@ -5,37 +5,11 @@
 @{
     ViewData["Title"] = "Artists";
 }
+<div ng-app="clientApp">
+    @* Angular component for the list of Artists  *@
+    <artist-list></artist-list>
 
-<h1>Artists</h1>
-<table class="table table-striped table-dark mt-3">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            @if (User.Identity.IsAuthenticated)
-            {
-                <th>Actions</th>
-            }
+    <script src="components/artist-list/artist-list.component.js"></script>
 
-        </tr>
-    </thead>
-    @foreach (var artist in Model)
-    {
-<tr>
-    <td><a href="/artist/details/@artist.Id" class="text-success">@artist.Name</a></td>
-    <td>@artist.Description</td>
-    @if (User.Identity.IsAuthenticated)
-    {
-        <td>
-            <a class="text-light mr-2" href="/artist/edit/@artist.Id"><i class="far fa-edit"></i></a>
+</div>
 
-            <a class="text-danger" href="/artist/delete/@artist.Id"><i class="far fa-trash-alt"></i></a>
-        </td>
-    }
-</tr>
-    }
-
-    
-
-</table>
-<a class="btn btn-success" href="/artist/create"><i class="fas fa-plus mr-2"></i>Add new</a>

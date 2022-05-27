@@ -1,0 +1,23 @@
+﻿<div>
+    <h3>Create an artist</h3>
+    <form class="form narrow-container" ng-submit="$ctrl.createArtist()">
+        <div class="validation text-danger" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group">
+            <label for="name"></label>
+            <input id="name" type="text" placeholder="Enter artist name" class="form-control" ng-model="$ctrl.artist.name"/>
+        </div>
+        <div class="form-group">
+            <label for="description"></label>
+            <input type="text" for="description" placeholder="Enter artist description" class="form-control"  ng-model="$ctrl.artist.description"/>
+        </div>
+        <div class="form-group">
+            <label for="facebookLink">Facebook Link</label>
+            <input type="text" for="facebookLink" placeholder="Enter Facebook link" class="form-control"  ng-model="$ctrl.artist.facebookLink"/>
+        </div>
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-success mr-3">Create</button>
+            <a class="btn btn-secondary" href="/artist"> Back</a>
+        </div>
+
+    </form>
+</div>

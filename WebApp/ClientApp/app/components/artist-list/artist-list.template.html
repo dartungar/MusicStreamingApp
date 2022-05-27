@@ -1,0 +1,18 @@
+﻿<table class="table table-striped table-dark mt-3">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tr ng-repeat="artist in $ctrl.artists">
+        <td><a href="/artist/details/{{artist.id}}" class="text-success">{{artist.name}}</a></td>
+        <td>{{artist.description}}</td>
+        <td>
+            <a class="text-light mr-2" href="/artist/edit/{{artist.id}}"><i class="far fa-edit"></i></a>
+            <a class="text-danger" href="/artist/delete/{{artist.id}}"><i class="far fa-trash-alt"></i></a>
+        </td>
+    </tr>
+</table>
+<a href="/artist/create" class="btn btn-success"><i class="fas fa-plus"></i>Add new</a>
