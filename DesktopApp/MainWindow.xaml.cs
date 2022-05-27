@@ -25,10 +25,21 @@ namespace DesktopApp
             InitializeComponent();
         }
 
+        private void Home_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new Uri(@"UI/Pages/HomePage.xaml", UriKind.Relative));
+        }
+
         private void TracksButton_OnClick(object sender, RoutedEventArgs e)
         {
             MainFrame.Navigate(new Uri(@"UI/Pages/TracksPage.xaml", UriKind.Relative));
-            //MainFrame.Refresh();
         }
+
+        private void ArtistsButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new Uri(@"UI/Pages/ArtistsPage.xaml", UriKind.Relative));
+        }
+
+
     }
 }

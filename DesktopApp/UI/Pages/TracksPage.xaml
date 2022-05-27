@@ -12,13 +12,29 @@
         <utils:IntToMinutesConverter x:Key="IntToMinutesConverter"/>
         <utils:StringCollectionToStringConverter x:Key="StringCollectionToStringConverter"/>
     </Page.Resources>
-    <Grid>
-        <DataGrid x:Name="TracksDataGrid"  AutoGenerateColumns="False">
+    <Grid Background="#FF2D2D2D">
+        <DataGrid x:Name="TracksDataGrid" IsReadOnly="True" ColumnWidth="*"  AutoGenerateColumns="False" Background="#FF2D2D2D" Foreground="#FFF7F7F7" RowBackground="#FF2D2D2D" AlternatingRowBackground="#FF424242" BorderBrush="#FF2D2D2D" SelectionMode="Single" CanUserAddRows="False" CanUserDeleteRows="False" Padding="15">
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                 Color="#17630a" />
+            </DataGrid.Resources>
+            <DataGrid.RowHeaderStyle>
+                <Style TargetType="DataGridRowHeader">
+                    <Setter Property="Background" Value="#FF2D2D2D"></Setter>
+                </Style>
+            </DataGrid.RowHeaderStyle>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#2b302a"></Setter>
+                    <Setter Property="FontSize" Value="16"></Setter>
+                    <Setter Property="Padding" Value="0 5 5 5"></Setter>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Track" Binding="{Binding Name}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Album" Binding="{Binding AlbumName}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Length" Binding="{Binding Path=Length,Converter={StaticResource IntToMinutesConverter}}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Artists" Binding="{Binding Path=ArtistsNames, Converter={StaticResource StringCollectionToStringConverter}}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Track" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Album" Binding="{Binding AlbumName}"/>
+                <DataGridTextColumn Header="Length" MaxWidth="75" Binding="{Binding Path=Length,Converter={StaticResource IntToMinutesConverter}}"/>
+                <DataGridTextColumn Header="Artists" Binding="{Binding Path=ArtistsNames, Converter={StaticResource StringCollectionToStringConverter}}"/>
             </DataGrid.Columns>
         </DataGrid>
 

@@ -9,8 +9,6 @@
       Title="HomePage">
 
     <Grid>
-        <TextBox HorizontalAlignment="Center" Margin="0,191,0,0" TextWrapping="Wrap" Text="Hello World!&#xD;&#xA;" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged"/>
-        <Border BorderBrush="Black" BorderThickness="1"/>
-
+<TextBlock Padding="0 0 0 30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFF9F9F9">Welcome to Nikofy!</TextBlock>
     </Grid>
 </Page>
