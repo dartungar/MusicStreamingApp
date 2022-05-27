@@ -13,6 +13,11 @@ namespace Service
     public class ArtistService : BaseService<Artist, ArtistDto>
     {
         private readonly IGenericRepository<Artist> _artistRepository;
+
+        public ArtistService() : this(new UnitOfWork()) { }
+
+        public ArtistService(IUnitOfWork unitOfWork) : this(unitOfWork, new GenericRepository<Artist>(unitOfWork)) { } 
+
         public ArtistService(IUnitOfWork unitOfWork, IGenericRepository<Artist> artistRepo) : base(unitOfWork)
         {
             _artistRepository = artistRepo;

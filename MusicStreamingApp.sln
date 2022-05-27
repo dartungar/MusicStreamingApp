@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{D54633C1-DCAD-492D-B86D-F43FF6835AA0}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "AngularApp", "AngularApp\AngularApp.esproj", "{C7B8E646-C08A-4BEA-89C0-A9103F8F0A23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{DDD97CB6-2F5B-4EF0-B1B6-9CF8DCB3C4A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{DDD97CB6-2F5B-4EF0-B1B6-9CF8DCB3C4A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopApp", "DesktopApp\DesktopApp.csproj", "{0275CF32-C407-432C-919B-B1806DCB10C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,16 +43,14 @@ Global
 		{D54633C1-DCAD-492D-B86D-F43FF6835AA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D54633C1-DCAD-492D-B86D-F43FF6835AA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D54633C1-DCAD-492D-B86D-F43FF6835AA0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7B8E646-C08A-4BEA-89C0-A9103F8F0A23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7B8E646-C08A-4BEA-89C0-A9103F8F0A23}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7B8E646-C08A-4BEA-89C0-A9103F8F0A23}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{C7B8E646-C08A-4BEA-89C0-A9103F8F0A23}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7B8E646-C08A-4BEA-89C0-A9103F8F0A23}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7B8E646-C08A-4BEA-89C0-A9103F8F0A23}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{DDD97CB6-2F5B-4EF0-B1B6-9CF8DCB3C4A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DDD97CB6-2F5B-4EF0-B1B6-9CF8DCB3C4A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDD97CB6-2F5B-4EF0-B1B6-9CF8DCB3C4A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDD97CB6-2F5B-4EF0-B1B6-9CF8DCB3C4A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0275CF32-C407-432C-919B-B1806DCB10C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0275CF32-C407-432C-919B-B1806DCB10C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0275CF32-C407-432C-919B-B1806DCB10C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0275CF32-C407-432C-919B-B1806DCB10C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
