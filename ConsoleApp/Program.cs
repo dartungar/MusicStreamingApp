@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Service;
-using Repository.DTO;
+using Service.DTO;
 
 namespace ConsoleApp
 {
@@ -10,7 +10,7 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            Application app = new Application();
+/*            Application app = new Application();
             while (app.IsActive)
             {
                 if (app.User == null)
@@ -70,7 +70,7 @@ namespace ConsoleApp
                     }
                 }
 
-            }
+            }*/
 
 
             

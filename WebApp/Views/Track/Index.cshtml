@@ -1,0 +1,31 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<Service.DTO.TrackDto>
+@{
+    ViewData["Title"] = "Tracks";
+}
+
+<h3>Tracks</h3>
+<table class="table table-striped table-dark mt-3">
+    <thead>
+        <tr>
+            <th>Track</th>
+            <th>Album</th>
+            <th class="text-center">Length</th>
+
+
+        </tr>
+    </thead>
+    @foreach (var track in Model)
+    {
+        <tr>
+            <td>
+                <strong>@track.Name</strong> <br />
+                <span class="text-secondary">@string.Join(", ", track.ArtistsNames)</span>
+            </td>
+            <td>@track.AlbumName</td>
+            <td class="text-center">@($"{track.Length / 60}:{(track.Length % 60).ToString().PadLeft(2, '0')}")</td>
+        </tr>
+    }
+</table>
